@@ -8,8 +8,8 @@
 <p align="right">
 
 >### 声明
->本模组不是外挂，只是用于丰富原版AU游戏内容的增强玩法，如有疑问请咨询EHR的官方服务器；
->本模组不隶属于树懒及其任何附加内容，该模组出现的任何问腿均与树懒无关，树懒也不会给模组分发许可证；
+>本模组不是外挂，只是用于丰富原版AU游戏内容的增强玩法，如有疑问请咨询EHR的官方服务器；  
+>本模组不隶属于树懒及其任何附加内容，该模组出现的任何问腿均与树懒无关，树懒也不会给模组分发许可证；  
 >这个fork只是为了增强EHR的简体中文翻译并且添加公告，Crowdin的翻译项目暂不对外公布，也不会做多语言支持；  
 <br>
 
@@ -22,21 +22,21 @@
 
 </p>
 
-<p align="left" style="font-size: 10px"><i>Image by oCelestino & Seleneous on Discord</i></p>
+<p align="left" style="font-size: 10px"><i>图片由：Celestino & Seleneous在Discord上共同制作！</i></p>
 ---
 
 <br>
 
-# Installation
+# 安装方法
 
 Whichever is easier for you:
 
-- Through [Mod Manager](https://goodloss.fr/mm)
-- or follow the manual guide on our website: [EHR](https://sites.google.com/view/ehr-au)
+- 通过 [Mod Manager](https://goodloss.fr/mm) 自动安装。  
+- 或者跟随EHR网站的英文教程走: [EHR](https://sites.google.com/view/ehr-au)  
 
 <br>
 
-Share the download link with your friends: [bit.ly/downloadehr](https://bit.ly/downloadehr)
+把下载链接分享出去！: [bit.ly/downloadehr](https://bit.ly/downloadehr)
 
 ## Want to become a beta tester?
 
@@ -203,46 +203,17 @@ You can also report bugs and suggest features in the #bug-reports and #suggestio
 
 <br>
 
-## Want to translate the mod to your language?
+## 增强简体中文翻译的进度如何？  
 
-Click this badge to view our translation project on Crowdin:
-[![Crowdin](https://badges.crowdin.net/ehr/localized.svg)](https://crowdin.com/project/ehr)
+参见如下吧唧/徽章的进度！:  
+[![Crowdin](https://badges.crowdin.net/EHROwnTranslationCN/localized.svg)](https://crowdin.com)  
 <br>
-Source language: English
+项目源语言：英语  
 
-#### Translation progress
-
-![es-ES translation](https://img.shields.io/badge/dynamic/json?color=blue&label=es-ES&style=for-the-badge&logo=crowdin&query=%24.progress[?(@.data.languageId==%27es-ES%27)].data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15788979-676754.json)
-![ko translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ko&style=for-the-badge&logo=crowdin&query=%24.progress[?(@.data.languageId==%27ko%27)].data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15788979-676754.json)
-![pt-BR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=pt-BR&style=for-the-badge&logo=crowdin&query=%24.progress[?(@.data.languageId==%27pt-BR%27)].data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15788979-676754.json)
-![ru translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru&style=for-the-badge&logo=crowdin&query=%24.progress[?(@.data.languageId==%27ru%27)].data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15788979-676754.json)
-![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=for-the-badge&logo=crowdin&query=%24.progress[?(@.data.languageId==%27zh-CN%27)].data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15788979-676754.json)
-
-[![Graph](https://badges.awesome-crowdin.com/translation-15788979-676754.png)](https://crowdin.com/project/ehr)
 
 <br>
 
-## Should I switch from TOHE to EHR?
 
-- In comparison, both mods are great, but EHR has more roles, features, game modes, and settings.
-- Moreover, EHR contains almost all the roles from TOHE, so you won't be missing out on anything.
-- Some roles were deleted or reworked to make them more balanced or to make them fit better with the new roles.
-- If you switch to EHR, you will have access to all features without paying for anything.
-- Test builds are available for free in our Discord server, and you can report bugs and suggest features there as well.
-- /up was reworked to /setrole, allowing you to set anyone's role for the next game, not only yours.
-- You can gain access to /setrole by just hosting EHR lobbies weekly or uploading EHR content to YouTube.
-- EHR has a custom team assigner application, which is a unique feature that no other mod has.
-- You can force or ban certain role/add-on combinations directly in the game using /combo.
-- Not sure how to use commands? Use /help to see a list of all available commands.
-- EHR helps the host use commands by directly displaying their short descriptions, arguments, descriptions for all
-  arguments, and checking whether an argument is valid or not.
-- You can also press TAB to autocomplete commands.
-- Some hints and tips are displayed during the loading screen and ejection animations, which can help you discover new
-  features.
-- I, the main developer of EHR, care about user feedback and suggestions, and I try to implement them as much as
-  possible.
-- If this wasn't convincing enough, you can always try EHR and see if you like it better than TOHE.
-- In the end, it's your choice, and I respect it.
 
 #### There are more game changing features, which you can find on our website: [EHR](https://sites.google.com/view/ehr-au)
 
