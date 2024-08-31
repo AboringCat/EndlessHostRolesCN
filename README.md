@@ -1,5 +1,5 @@
 <h1 align="center">Endless Host Roles</h1>
-<h5 align="center">Previously known as TOHE+</h5>
+<h5 align="center">原名TOHE+</h5>
 
 <br>
 
@@ -7,13 +7,10 @@
 
 <p align="right">
 
-> ### Regarding this mod
->
-> This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or
-> otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are the property of Innersloth LLC.
-> <br>
-> This is not a cheat, it's a mod that adds new roles and features to the game. If you have questions, ask in our
-> Discord server.
+>### 声明
+>本模组不是外挂，只是用于丰富原版AU游戏内容的增强玩法，如有疑问请咨询EHR的官方服务器；
+>本模组不隶属于树懒及其任何附加内容，该模组出现的任何问腿均与树懒无关，树懒也不会给模组分发许可证；
+>这个fork只是为了增强EHR的简体中文翻译并且添加公告，Crowdin的翻译项目暂不对外公布，也不会做多语言支持；  
 <br>
 
 </p>
