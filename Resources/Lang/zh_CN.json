@@ -43,7 +43,7 @@
   "PassiveNeutralsCanGuess": "<color=#ffab1b>友善中立</color>可孤注一掷",
   "CovenCanGuess": "<color=#8e44ad>巫师</color>可孤注一掷",
   "CanGuessAddons": "符文可被压上筹码",
-  "CrewCanGuessCrew": "<color=#8cffff>Crewmates</color> Can Guess <color=#8cffff>Crewmate</color> Roles",
+  "CrewCanGuessCrew": "<color=#8cffff>船员</color>可除异己<color=#8cffff>（谨慎赌注）</color>",
   "ImpCanGuessImp": "<color=#ff1919>Impostors</color> Can Guess <color=#ff1919>Impostor</color> Roles",
   "AddonSettingsCrew": "<color=#8cffff>Crewmate</color> Configuration",
   "AddonSettingsImp": "<color=#ff1919>Impostor</color> Configuration",
