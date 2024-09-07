@@ -1,0 +1,24 @@
+{
+  "News": [
+    {
+      "NewsNumber": "100002",
+      "NewsTitle": "标题占位符",
+      "NewsSubtitle": "占位符字幕",
+      "Short": "占位符短标题",
+      "Body": [
+        "占位符主体"
+      ],
+      "NewsDate": "2024-09-07T19:30:00Z"
+    },
+    {
+      "NewsNumber": "100007",
+      "NewsTitle": "EndlessHostRoles V4.7.0",
+      "NewsSubtitle": "新版本，新高度",
+      "Short": "EHR -V4.7.0",
+      "Body": [
+      ],
+      "Date": "2024-09-07T19:30:00Z"
+    },
+  ]
+}
+
