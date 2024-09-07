@@ -88,7 +88,7 @@ public class PlayerState(byte playerId)
     public bool IsBlackOut { get; set; }
 
     public bool IsSuicide => deathReason == DeathReason.Suicide;
-    public TaskState TaskState { get; } = new();
+    public TaskState TaskState { get; set; } = new();
 
     public void SetMainRole(CustomRoles role)
     {
@@ -108,6 +108,9 @@ public class PlayerState(byte playerId)
             countTypes = CountTypes.CustomTeam;
 
         SubRoles.ForEach(SetAddonCountTypes);
+
+        if (!Player.HasKillButton() && role == CustomRoles.Refugee)
+            Player.RpcChangeRoleBasis(CustomRoles.Refugee);
 
         Role = role.GetRoleClass();
 
@@ -137,6 +140,7 @@ public class PlayerState(byte playerId)
                 RemoveDisableDevicesPatch.UpdateDisableDevices();
             }
 
+            if (Lyncher.On) Lyncher.Instances.ForEach(x => x.OnRoleChange(PlayerId));
             if (!role.Is(Team.Impostor)) SubRoles.ToArray().DoIf(x => x.IsImpOnlyAddon(), RemoveSubRole);
             if (role is CustomRoles.Sidekick or CustomRoles.Necromancer or CustomRoles.Deathknight or CustomRoles.Refugee) RemoveSubRole(CustomRoles.Nimble);
 

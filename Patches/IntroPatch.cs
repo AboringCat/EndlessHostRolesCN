@@ -12,7 +12,7 @@ using static EHR.Translator;
 namespace EHR;
 
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
-class SetUpRoleTextPatch
+static class SetUpRoleTextPatch
 {
     public static bool IsInIntro;
 
@@ -185,10 +185,6 @@ class CoBeginPatch
         sb.Append($"Map: {Main.CurrentMap}");
 
         Logger.Info("\n" + sb, "GameInfo", multiLine: true);
-
-        Main.AllPlayerControls.Do(x => Main.PlayerStates[x.PlayerId].InitTask(x));
-        GameData.Instance.RecomputeTaskCounts();
-        TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
 
         RPC.RpcVersionCheck();
 
@@ -716,6 +712,11 @@ class IntroCutsceneDestroyPatch
     {
         if (!GameStates.IsInGame) return;
         Main.IntroDestroyed = true;
+
+        // Set roleAssigned as false for overriding roles for modded players
+        // for vanilla clients we use "Data.Disconnected"
+        Main.AllPlayerControls.Do(x => x.roleAssigned = false);
+
         if (AmongUsClient.Instance.AmHost)
         {
             if (Main.NormalOptions.MapId != 4)
@@ -812,7 +813,7 @@ class IntroCutsceneDestroyPatch
                 LateTask.New(() => Main.ProcessShapeshifts = true, 1f, "Enable SS Processing");
             }
 
-            if (Options.UseUnshiftTrigger.GetBool())
+            if (Options.UseUnshiftTrigger.GetBool() || Main.PlayerStates.Values.Any(x => x.MainRole.AlwaysUsesUnshift()))
             {
                 LateTask.New(() => Main.AllAlivePlayerControls.Do(x => x.CheckAndSetUnshiftState()), 2f, "UnshiftTrigger SS");
             }

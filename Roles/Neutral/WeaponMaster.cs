@@ -15,7 +15,7 @@ public class WeaponMaster : RoleBase
     public static List<byte> playerIdList = [];
 
     private static OptionItem KillCooldown;
-    public static OptionItem CanVent;
+    private static OptionItem CanVent;
     private static OptionItem HasImpostorVision;
     private static OptionItem Radius;
     private static OptionItem HighKCD;
@@ -35,7 +35,7 @@ public class WeaponMaster : RoleBase
 
     public override void SetupCustomOption()
     {
-        SetupSingleRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.WeaponMaster);
+        SetupRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.WeaponMaster);
         KillCooldown = new FloatOptionItem(Id + 10, "KillCooldown", new(0f, 180f, 0.5f), 22.5f, TabGroup.NeutralRoles)
             .SetParent(CustomRoleSpawnChances[CustomRoles.WeaponMaster])
             .SetValueFormat(OptionFormat.Seconds);
@@ -219,9 +219,9 @@ public class WeaponMaster : RoleBase
         return !playerId.IsPlayerModClient() ? GetHudAndProgressText(playerId) : string.Empty;
     }
 
-    public override string GetSuffix(PlayerControl seer, PlayerControl target, bool isHUD = false, bool isMeeting = false)
+    public override string GetSuffix(PlayerControl seer, PlayerControl target, bool hud = false, bool meeting = false)
     {
-        return isHUD ? GetHudAndProgressText(seer.PlayerId) : string.Empty;
+        return hud ? GetHudAndProgressText(seer.PlayerId) : string.Empty;
     }
 
     static string GetHudAndProgressText(byte id)

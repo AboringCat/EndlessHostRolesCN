@@ -525,57 +525,71 @@ public static class Utils
     {
         if (!DoRPC) return;
 
-        var w = CreateRPC(rpc);
-        foreach (var o in data)
+        MessageWriter w;
+        try
         {
-            switch (o)
-            {
-                case byte b:
-                    w.Write(b);
-                    break;
-                case int i:
-                    w.WritePacked(i);
-                    break;
-                case float f:
-                    w.Write(f);
-                    break;
-                case string s:
-                    w.Write(s);
-                    break;
-                case bool b:
-                    w.Write(b);
-                    break;
-                case long l:
-                    w.Write(l.ToString());
-                    break;
-                case char c:
-                    w.Write(c.ToString());
-                    break;
-                case Vector2 v:
-                    w.Write(v);
-                    break;
-                case Vector3 v:
-                    w.Write(v);
-                    break;
-                case PlayerControl pc:
-                    w.WriteNetObject(pc);
-                    break;
-                default:
-                    try
-                    {
-                        if (o != null && Enum.TryParse(o.GetType(), o.ToString(), out var e) && e != null)
-                            w.WritePacked((int)e);
-                    }
-                    catch (InvalidCastException e)
-                    {
-                        ThrowException(e);
-                    }
-
-                    break;
-            }
+            w = CreateRPC(rpc);
+        }
+        catch
+        {
+            return;
         }
 
-        EndRPC(w);
+        try
+        {
+            foreach (var o in data)
+            {
+                switch (o)
+                {
+                    case byte b:
+                        w.Write(b);
+                        break;
+                    case int i:
+                        w.WritePacked(i);
+                        break;
+                    case float f:
+                        w.Write(f);
+                        break;
+                    case string s:
+                        w.Write(s);
+                        break;
+                    case bool b:
+                        w.Write(b);
+                        break;
+                    case long l:
+                        w.Write(l.ToString());
+                        break;
+                    case char c:
+                        w.Write(c.ToString());
+                        break;
+                    case Vector2 v:
+                        w.Write(v);
+                        break;
+                    case Vector3 v:
+                        w.Write(v);
+                        break;
+                    case PlayerControl pc:
+                        w.WriteNetObject(pc);
+                        break;
+                    default:
+                        try
+                        {
+                            if (o != null && Enum.TryParse(o.GetType(), o.ToString(), out var e) && e != null)
+                                w.WritePacked((int)e);
+                        }
+                        catch (InvalidCastException e)
+                        {
+                            ThrowException(e);
+                        }
+
+                        break;
+                }
+            }
+        }
+        finally
+        {
+            EndRPC(w);
+        }
     }
 
     public static void IncreaseAbilityUseLimitOnKill(PlayerControl killer)
@@ -635,7 +649,7 @@ public static class Utils
         if (p.Role == null) return false;
 
         var hasTasks = true;
-        var States = Main.PlayerStates[p.PlayerId];
+        var state = Main.PlayerStates[p.PlayerId];
         if (p.Disconnected) return false;
         if (p.Role.IsImpostor)
             hasTasks = false;
@@ -651,9 +665,7 @@ public static class Utils
             case CustomGameMode.HideAndSeek: return HnSManager.HasTasks(p);
         }
 
-        // if (Shifter.ForceDisableTasks(p.PlayerId)) return false;
-
-        var role = States.MainRole;
+        var role = state.MainRole;
         switch (role)
         {
             case CustomRoles.GM:
@@ -762,7 +774,7 @@ public static class Utils
             case CustomRoles.Doomsayer:
                 hasTasks = false;
                 break;
-            case CustomRoles.Dad when ((Dad)States.Role).DoneTasks:
+            case CustomRoles.Dad when ((Dad)state.Role).DoneTasks:
             case CustomRoles.Workaholic:
             case CustomRoles.Terrorist:
             case CustomRoles.Sunnyboy:
@@ -786,7 +798,7 @@ public static class Utils
                 break;
         }
 
-        foreach (CustomRoles subRole in States.SubRoles)
+        foreach (CustomRoles subRole in state.SubRoles)
         {
             switch (subRole)
             {
@@ -844,6 +856,7 @@ public static class Utils
     {
         if (Options.CurrentGameMode is CustomGameMode.CaptureTheFlag or CustomGameMode.NaturalDisasters) return false;
         if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId || Options.CurrentGameMode is CustomGameMode.FFA or CustomGameMode.SoloKombat or CustomGameMode.MoveAndStop or CustomGameMode.HotPotato or CustomGameMode.Speedrun || (Options.CurrentGameMode == CustomGameMode.HideAndSeek && HnSManager.IsRoleTextEnabled(PlayerControl.LocalPlayer, __instance)) || Main.VisibleTasksCount && PlayerControl.LocalPlayer.Data.IsDead && Options.GhostCanSeeOtherRoles.GetBool() || PlayerControl.LocalPlayer.Is(CustomRoles.Mimic) && Main.VisibleTasksCount && __instance.Data.IsDead && Options.MimicCanSeeDeadRoles.GetBool()) return true;
+        if (Altruist.On && Main.DiedThisRound.Contains(PlayerControl.LocalPlayer.PlayerId)) return false;
 
         switch (__instance.GetCustomRole())
         {
@@ -1884,7 +1897,7 @@ public static class Utils
 
                     if (Options.CurrentGameMode is not CustomGameMode.Standard and not CustomGameMode.HideAndSeek) goto GameMode;
 
-                    Main.PlayerStates.Values.Do(x => SelfSuffix.Append(x.Role.GetSuffix(seer, seer, isMeeting: isForMeeting)));
+                    Main.PlayerStates.Values.Do(x => SelfSuffix.Append(x.Role.GetSuffix(seer, seer, meeting: isForMeeting)));
 
                     SelfSuffix.Append(Spurt.GetSuffix(seer));
 
@@ -1894,7 +1907,7 @@ public static class Utils
                     {
                         if (Options.UsePets.GetBool() && Main.AbilityCD.TryGetValue(seer.PlayerId, out var time) && !seer.IsModClient())
                         {
-                            var remainingCD = time.TOTALCD - (TimeStamp - time.START_TIMESTAMP) + 1;
+                            var remainingCD = time.TotalCooldown - (TimeStamp - time.StartTimeStamp) + 1;
                             SelfSuffix.Append(string.Format(GetString("CDPT"), remainingCD > 60 ? "> 60" : remainingCD));
                         }
 
@@ -1997,7 +2010,7 @@ public static class Utils
                                 }
                             }
 
-                            var mHelp = "\n" + GetString("MyRoleCommandHelp");
+                            var mHelp = !showLongInfo && Options.CurrentGameMode == CustomGameMode.Standard ? "\n" + GetString("MyRoleCommandHelp") : string.Empty;
 
                             SeerRealName = !Options.ChangeNameToRoleInfo.GetBool()
                                 ? SeerRealName
@@ -2199,6 +2212,7 @@ public static class Utils
                                     ? $"<size={fontSize}>{target.GetDisplayRoleName(seeTargetBetrayalAddons: shouldSeeTargetAddons)}{GetProgressText(target)}</size>\r\n"
                                     : string.Empty;
 
+                            if (Altruist.On && Main.DiedThisRound.Contains(seer.PlayerId)) TargetRoleText = string.Empty;
                             if (Options.CurrentGameMode is CustomGameMode.CaptureTheFlag or CustomGameMode.NaturalDisasters) TargetRoleText = string.Empty;
 
                             if (!GameStates.IsLobby)
@@ -2291,7 +2305,7 @@ public static class Utils
                                         break;
                                 }
 
-                                Main.PlayerStates.Values.Do(x => TargetSuffix.Append(x.Role.GetSuffix(seer, target, isMeeting: isForMeeting)));
+                                Main.PlayerStates.Values.Do(x => TargetSuffix.Append(x.Role.GetSuffix(seer, target, meeting: isForMeeting)));
 
                                 if (MeetingStates.FirstMeeting && Main.ShieldPlayer == target.FriendCode && !string.IsNullOrEmpty(target.FriendCode) && Options.CurrentGameMode is CustomGameMode.Standard or CustomGameMode.SoloKombat or CustomGameMode.FFA)
                                     TargetSuffix.Append(GetString("DiedR1Warning"));
@@ -2480,7 +2494,7 @@ public static class Utils
             CustomRoles.Sentinel => Sentinel.PatrolCooldown.GetInt(),
             CustomRoles.Druid => Druid.VentCooldown.GetInt(),
             CustomRoles.Catcher => Catcher.AbilityCooldown.GetInt(),
-            CustomRoles.Sentry => Impostor.Sentry.ShowInfoCooldown.GetInt(),
+            CustomRoles.Sentry => Crewmate.Sentry.ShowInfoCooldown.GetInt(),
             CustomRoles.ToiletMaster => ToiletMaster.AbilityCooldown.GetInt(),
             CustomRoles.Sniper => Options.DefaultShapeshiftCooldown.GetInt(),
             CustomRoles.Assassin => Assassin.AssassinateCooldownOpt.GetInt(),
@@ -2511,8 +2525,14 @@ public static class Utils
         Main.AbilityCD[playerId] = (TimeStamp, CD);
         SendRPC(CustomRPC.SyncAbilityCD, 1, playerId, CD);
 
-        if (Options.UseUnshiftTrigger.GetBool() && role.SimpleAbilityTrigger() && (!role.IsNeutral() || Options.UseUnshiftTriggerForNKs.GetBool()))
+        if (Options.UseUnshiftTrigger.GetBool() && role.SimpleAbilityTrigger() && (!role.IsNeutral() || Options.UseUnshiftTriggerForNKs.GetBool()) && !role.AlwaysUsesUnshift())
             GetPlayerById(playerId)?.RpcResetAbilityCooldown();
+    }
+
+    public static (RoleTypes RoleType, CustomRoles CustomRole) GetRoleMap(byte seerId, byte targetId = byte.MaxValue)
+    {
+        if (targetId == byte.MaxValue) targetId = seerId;
+        return SelectRolesPatch.RpcSetRoleReplacer.RoleMap[(seerId, targetId)];
     }
 
     public static void AfterMeetingTasks()
@@ -2528,7 +2548,6 @@ public static class Utils
         if (loversChat) GameEndChecker.Prefix();
 
         Lovers.IsChatActivated = false;
-        if (!Options.UseUnshiftTrigger.GetBool()) Main.ProcessShapeshifts = true;
         AFKDetector.NumAFK = 0;
         AFKDetector.PlayerData.Clear();
 
@@ -2565,12 +2584,6 @@ public static class Utils
                     pc.Notify(GetString("DoYourTasksPlease"), 10f);
 
                 GhostRolesManager.NotifyAboutGhostRole(pc);
-
-                if (pc.HasGhostRole())
-                {
-                    pc.ReactorFlash(1f);
-                    pc.ResetPlayerCam(2f);
-                }
             }
 
             if (pc.Is(CustomRoles.Specter) || pc.Is(CustomRoles.Haunter)) pc.RpcResetAbilityCooldown();
@@ -2619,6 +2632,8 @@ public static class Utils
     {
         try
         {
+            if (!onMeeting) Main.DiedThisRound.Add(target.PlayerId);
+
             // Record the first death
             if (Main.FirstDied == string.Empty)
                 Main.FirstDied = target.FriendCode;
@@ -2710,7 +2725,7 @@ public static class Utils
             Amnesiac.OnAnyoneDeath(target);
             Dad.OnAnyoneDeath(target);
             Whisperer.OnAnyoneDied(target);
-            Impostor.Sentry.OnAnyoneMurder(target);
+            Crewmate.Sentry.OnAnyoneMurder(target);
 
             if (QuizMaster.On) QuizMaster.Data.NumPlayersDeadThisRound++;
 

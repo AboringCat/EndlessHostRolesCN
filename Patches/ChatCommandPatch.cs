@@ -854,6 +854,7 @@ internal static class ChatCommands
         if (text.Length < 6 || !GameStates.IsMeeting) return;
         string toVote = text[6..].Replace(" ", string.Empty);
         if (!byte.TryParse(toVote, out var voteId) || MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == player.PlayerId)?.DidVote == true) return;
+        if (voteId > Main.AllPlayerControls.Length) return;
         if (player.PlayerId != PlayerControl.LocalPlayer.PlayerId) ChatManager.SendPreviousMessagesToAll();
         if (!player.IsHost()) MeetingHud.Instance?.CastVote(player.PlayerId, voteId);
         else MeetingHud.Instance?.CmdCastVote(player.PlayerId, voteId);
@@ -2018,7 +2019,7 @@ internal class ChatUpdatePatch
 
         LastMessages.RemoveAll(x => Utils.TimeStamp - x.SendTimeStamp > 10);
 
-        if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count == 0 || Main.MessagesToSend[0].RECEIVER_ID == byte.MaxValue && Main.MessageWait.Value > __instance.timeSinceLastMessage || DoBlockChat) return;
+        if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count == 0 || Main.MessagesToSend[0].ReceiverID == byte.MaxValue && Main.MessageWait.Value > __instance.timeSinceLastMessage || DoBlockChat) return;
 
         var player = Main.AllAlivePlayerControls.MinBy(x => x.PlayerId) ?? Main.AllPlayerControls.MinBy(x => x.PlayerId) ?? PlayerControl.LocalPlayer;
         if (player == null) return;
