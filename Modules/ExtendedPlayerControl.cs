@@ -60,6 +60,38 @@ static class ExtendedPlayerControl
         }
     }
 
+    public static bool CanUseVent(this PlayerControl player)
+    {
+        return CanUseVent(player, GetClosestVent(player).Id);
+    }
+
+    // VentId is unused for now, but it can be used to block specific vents
+    // ReSharper disable once UnusedParameter.Global
+    public static bool CanUseVent(this PlayerControl player, int ventId)
+    {
+        return GameStates.IsInTask && (player.CanUseImpostorVentButton() || player.GetRoleTypes() == RoleTypes.Engineer || player.inVent);
+    }
+
+    // Next 3: https://github.com/Rabek009/MoreGamemodes/blob/master/Modules/ExtendedPlayerControl.cs
+    public static Vent GetClosestVent(this PlayerControl player)
+    {
+        var pos = player.Pos();
+        return ShipStatus.Instance.AllVents.MinBy(x => Vector2.Distance(pos, x.transform.position));
+    }
+    
+    public static List<Vent> GetVentsFromClosest(this PlayerControl player)
+    {
+        Vector2 playerpos = player.transform.position;
+        List<Vent> vents = ShipStatus.Instance.AllVents.ToList();
+        vents.Sort((v1, v2) => Vector2.Distance(playerpos, v1.transform.position).CompareTo(Vector2.Distance(playerpos, v2.transform.position)));
+        return vents;
+    }
+
+    public static void RpcSetVentInteraction(this PlayerControl player)
+    {
+        VentilationSystemDeterioratePatch.SerializeV2(ShipStatus.Instance.Systems[SystemTypes.Ventilation].Cast<VentilationSystem>(), player);
+    }
+
     public static void SetChatVisible(this PlayerControl player) // Credit: NikoCat233 | Unused for now
     {
         if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost || GameStates.IsMeeting) return;
@@ -1259,8 +1291,11 @@ static class ExtendedPlayerControl
             pc.RpcShapeshift(target, false);
             Main.ProcessShapeshifts = process;
             Main.CheckShapeshift[pc.PlayerId] = false;
-            RpcChangeSkin(pc, outfit);
-            if (notify) NotifyRoles(SpecifySeer: pc, SpecifyTarget: pc, NoCache: true);
+            LateTask.New(() =>
+            {
+                RpcChangeSkin(pc, outfit);
+                if (notify) NotifyRoles(SpecifySeer: pc, SpecifyTarget: pc, NoCache: true);
+            }, 0.1f, log: false);
         }
     }
 

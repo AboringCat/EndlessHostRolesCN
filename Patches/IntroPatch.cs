@@ -329,7 +329,7 @@ class BeginCrewmatePatch
                     break;
             }
 
-            if (Main.LoversPlayers.Count == 2 && Main.LoversPlayers.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId))
+            if (Main.LoversPlayers.Count == 2 && Main.LoversPlayers.Exists(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId))
             {
                 __instance.TeamTitle.color = __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.Lovers);
                 byte otherLoverId = Main.LoversPlayers.First(x => x.PlayerId != PlayerControl.LocalPlayer.PlayerId).PlayerId;
@@ -847,6 +847,21 @@ class IntroCutsceneDestroyPatch
             if (Main.ResetCamPlayerList.Contains(lp.PlayerId))
             {
                 lp.Data.Role.AffectedByLightAffectors = false;
+            }
+
+            bool shouldPerformVentInteractions = false;
+            foreach (var pc in PlayerControl.AllPlayerControls)
+            {
+                if (VentilationSystemDeterioratePatch.BlockVentInteraction(pc))
+                {
+                    VentilationSystemDeterioratePatch.LastClosestVent[pc.PlayerId] = pc.GetVentsFromClosest()[0].Id;
+                    shouldPerformVentInteractions = true;
+                }
+            }
+
+            if (shouldPerformVentInteractions)
+            {
+                Utils.SetAllVentInteractions();
             }
 
             if (AFKDetector.ActivateOnStart.GetBool())
