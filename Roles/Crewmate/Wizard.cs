@@ -21,7 +21,7 @@ namespace EHR.Crewmate
         private static readonly Dictionary<Buff, float> MaxBuffValues = new()
         {
             [Buff.Speed] = 3f,
-            [Buff.Vision] = 1.3f,
+            [Buff.Vision] = 1.2f,
             [Buff.KCD] = 40f
         };
 
@@ -65,6 +65,8 @@ namespace EHR.Crewmate
             SelectedBuff = default;
             playerId.SetAbilityUseLimit(AbilityUseLimit.GetInt());
         }
+
+        public override bool CanUseKillButton(PlayerControl pc) => pc.IsAlive();
 
         public override void SetKillCooldown(byte id)
         {
@@ -128,14 +130,15 @@ namespace EHR.Crewmate
 
             BuffValues[SelectedBuff] += SelectedBuff switch
             {
-                Buff.Speed => 0.25f,
+                Buff.Speed => 0.3f,
                 Buff.Vision => 0.15f,
-                Buff.KCD => 2.5f,
+                Buff.KCD => 5f,
                 _ => 0f
             };
 
             if (BuffValues[SelectedBuff] > MaxBuffValues[SelectedBuff])
                 BuffValues[SelectedBuff] = 0f;
+            else BuffValues[SelectedBuff] = (float)Math.Round(BuffValues[SelectedBuff], 1);
 
             Utils.SendRPC(CustomRPC.SyncRoleData, WizardId, 2, BuffValues[SelectedBuff]);
             Utils.NotifyRoles(SpecifySeer: shapeshifter, SpecifyTarget: shapeshifter);
@@ -203,13 +206,13 @@ namespace EHR.Crewmate
 
             if (seer.PlayerId != target.PlayerId || (seer.IsModClient() && !hud)) return string.Empty;
 
-            return string.Format(Translator.GetString("Wizard.SelectedBuff"), SelectedBuff, BuffValues[SelectedBuff]);
+            return string.Format(Translator.GetString("Wizard.SelectedBuff"), SelectedBuff, BuffValues[SelectedBuff], GetBuffFormat(SelectedBuff));
 
-            char GetBuffFormat(Buff buff) => buff switch
+            string GetBuffFormat(Buff buff) => buff switch
             {
-                Buff.Speed => 'x',
-                Buff.Vision => 'x',
-                Buff.KCD => 's',
+                Buff.Speed => "x",
+                Buff.Vision => "x",
+                Buff.KCD => "s",
                 _ => throw new ArgumentOutOfRangeException(nameof(buff), buff, "Invalid buff")
             };
         }
