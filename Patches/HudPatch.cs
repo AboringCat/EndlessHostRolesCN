@@ -806,7 +806,6 @@ static class DialogueBoxHidePatch
 static class CoShowIntroPatch
 {
     public static bool IntroStarted;
-
     public static void Prefix()
     {
         if (!AmongUsClient.Instance.AmHost || !GameStates.IsModHost) return;
@@ -815,17 +814,34 @@ static class CoShowIntroPatch
 
         LateTask.New(() =>
         {
-            // Update name players for custom vanilla intro
-            Utils.DoNotifyRoles(NoCache: true);
-        }, 0.35f, "Update names");
+            if (!(AmongUsClient.Instance.IsGameOver || GameStates.IsLobby || GameEndChecker.ShowAllRolesWhenGameEnd))
+            {
+                StartGameHostPatch.RpcSetDisconnected(disconnected: false);
+
+                if (!AmongUsClient.Instance.IsGameOver)
+                    DestroyableSingleton<HudManager>.Instance.SetHudActive(true);
+            }
+        }, 0.6f, "Set Disconnected");
 
         LateTask.New(() =>
         {
-            ShipStatusBeginPatch.RolesIsAssigned = true;
+            try
+            {
+                if (!(AmongUsClient.Instance.IsGameOver || GameStates.IsLobby || GameEndChecker.ShowAllRolesWhenGameEnd))
+                {
+                    ShipStatusBeginPatch.RolesIsAssigned = true;
 
-            // Assign tasks after assign all roles, as it should be
-            ShipStatus.Instance.Begin();
-        }, 4f, "Assing Task");
+                    // Assign tasks after assign all roles, as it should be
+                    ShipStatus.Instance.Begin();
+
+                    Utils.SyncAllSettings();
+                }
+            }
+            catch
+            {
+                Logger.Warn($"Game ended? {AmongUsClient.Instance.IsGameOver || GameStates.IsLobby || GameEndChecker.ShowAllRolesWhenGameEnd}", "ShipStatus.Begin");
+            }
+        }, 4f, "Assing Task For All");
     }
 }
 

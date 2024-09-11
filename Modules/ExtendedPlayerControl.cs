@@ -62,7 +62,7 @@ static class ExtendedPlayerControl
 
     public static bool CanUseVent(this PlayerControl player)
     {
-        return CanUseVent(player, GetClosestVent(player).Id);
+        return CanUseVent(player, GetClosestVent(player)?.Id ?? int.MaxValue);
     }
 
     // VentId is unused for now, but it can be used to block specific vents
@@ -76,9 +76,9 @@ static class ExtendedPlayerControl
     public static Vent GetClosestVent(this PlayerControl player)
     {
         var pos = player.Pos();
-        return ShipStatus.Instance.AllVents.MinBy(x => Vector2.Distance(pos, x.transform.position));
+        return ShipStatus.Instance.AllVents.Where(x => x != null).MinBy(x => Vector2.Distance(pos, x.transform.position));
     }
-    
+
     public static List<Vent> GetVentsFromClosest(this PlayerControl player)
     {
         Vector2 playerpos = player.transform.position;
@@ -320,13 +320,15 @@ static class ExtendedPlayerControl
             {
                 foreach (var seer in Main.AllPlayerControls)
                 {
-                    var isSelf = player.PlayerId == seer.PlayerId;
-                    if (!isSelf && seer.HasDesyncRole() && !seer.AmOwner)
+                    var seerClientId = seer.GetClientId();
+                    if (seerClientId == -1) continue;
+
+                    if (player.PlayerId != seer.PlayerId && seer.HasDesyncRole() && !seer.IsHost())
                         remeberRoleType = newCustomRole.GetVNRole() is CustomRoles.Noisemaker ? RoleTypes.Noisemaker : RoleTypes.Scientist;
                     else remeberRoleType = newRoleType;
 
-                    SelectRolesPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
-                    player.RpcSetRoleDesync(remeberRoleType, seer.GetClientId());
+                    StartGameHostPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
+                    player.RpcSetRoleDesync(remeberRoleType, seerClientId);
                 }
 
                 break;
@@ -336,6 +338,9 @@ static class ExtendedPlayerControl
             {
                 foreach (var seer in Main.AllPlayerControls)
                 {
+                    var seerClientId = seer.GetClientId();
+                    if (seerClientId == -1) continue;
+
                     if (player.PlayerId == seer.PlayerId)
                     {
                         remeberRoleType = player.IsHost() ? RoleTypes.Crewmate : RoleTypes.Impostor;
@@ -350,8 +355,8 @@ static class ExtendedPlayerControl
                         else remeberRoleType = newRoleType;
                     }
 
-                    SelectRolesPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
-                    player.RpcSetRoleDesync(remeberRoleType, seer.GetClientId());
+                    StartGameHostPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
+                    player.RpcSetRoleDesync(remeberRoleType, seerClientId);
                 }
 
                 break;
@@ -370,8 +375,8 @@ static class ExtendedPlayerControl
                         remeberRoleType = Utils.GetRoleMap(seer.PlayerId, playerId).RoleType;
                     else remeberRoleType = newRoleType;
 
-                    SelectRolesPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
-                    player.RpcSetRoleDesync(remeberRoleType, seer.GetClientId());
+                    StartGameHostPatch.RpcSetRoleReplacer.RoleMap[(seer.PlayerId, playerId)] = (remeberRoleType, newCustomRole);
+                    player.RpcSetRoleDesync(remeberRoleType, seerClientId);
                 }
 
                 break;
@@ -384,7 +389,7 @@ static class ExtendedPlayerControl
             {
                 foreach (var target in Main.AllPlayerControls)
                 {
-                    if (SelectRolesPatch.RpcSetRoleReplacer.RoleMap.TryGetValue((seer.PlayerId, target.PlayerId), out var map))
+                    if (StartGameHostPatch.RpcSetRoleReplacer.RoleMap.TryGetValue((seer.PlayerId, target.PlayerId), out var map))
                         Logger.Info($"seer {seer.Data?.PlayerName}-{seer.PlayerId}, target {target.Data?.PlayerName}-{target.PlayerId} => {map.RoleType}, {map.CustomRole}", "Role Map");
                 }
             }
@@ -969,6 +974,8 @@ static class ExtendedPlayerControl
         CustomRoles role = pc.GetCustomRole();
         if (pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
         if (role.GetVNRole(checkDesyncRole: true) is CustomRoles.Impostor or CustomRoles.Shapeshifter or CustomRoles.Phantom) return true;
+        if (pc.GetRoleTypes() is RoleTypes.Impostor or RoleTypes.Shapeshifter or RoleTypes.Phantom) return true;
+        if (pc.Is(CustomRoles.Bloodlust)) return true;
         return pc.Is(CustomRoleTypes.Impostor) || pc.IsNeutralKiller() || role.IsTasklessCrewmate();
     }
 

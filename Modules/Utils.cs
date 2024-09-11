@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using AmongUs.Data;
@@ -456,15 +455,18 @@ public static class Utils
 
         if (Options.NameDisplayAddons.GetBool() && !pure && self)
         {
-            foreach (var subRole in targetSubRoles.Where(x => x is not CustomRoles.LastImpostor and not CustomRoles.Madmate and not CustomRoles.Charmed and not CustomRoles.Recruit and not CustomRoles.Lovers and not CustomRoles.Contagious))
+            foreach (var subRole in targetSubRoles)
             {
-                var str = GetString("Prefix." + subRole);
-                if (!subRole.IsAdditionRole())
+                if (subRole is not CustomRoles.LastImpostor and not CustomRoles.Madmate and not CustomRoles.Charmed and not CustomRoles.Recruit and not CustomRoles.Lovers and not CustomRoles.Contagious and not CustomRoles.Bloodlust)
                 {
-                    str = GetString(subRole.ToString());
-                }
+                    var str = GetString("Prefix." + subRole);
+                    if (!subRole.IsAdditionRole())
+                    {
+                        str = GetString(subRole.ToString());
+                    }
 
-                RoleText = ColorString(GetRoleColor(subRole), (Options.AddBracketsToAddons.GetBool() ? "<#ffffff>(</color>" : string.Empty) + str + (Options.AddBracketsToAddons.GetBool() ? "<#ffffff>)</color>" : string.Empty) + " ") + RoleText;
+                    RoleText = ColorString(GetRoleColor(subRole), (Options.AddBracketsToAddons.GetBool() ? "<#ffffff>(</color>" : string.Empty) + str + (Options.AddBracketsToAddons.GetBool() ? "<#ffffff>)</color>" : string.Empty) + " ") + RoleText;
+                }
             }
         }
 
@@ -492,6 +494,13 @@ public static class Utils
         {
             RoleColor = GetRoleColor(CustomRoles.Contagious);
             RoleText = GetRoleString("Contagious-") + RoleText;
+        }
+
+        // Bloodlust
+        if (targetSubRoles.Contains(CustomRoles.Bloodlust) && (self || pure || seeTargetBetrayalAddons))
+        {
+            RoleColor = GetRoleColor(CustomRoles.Bloodlust);
+            RoleText = GetRoleString("Bloodlust-") + RoleText;
         }
 
         return (RoleText, RoleColor);
@@ -1602,24 +1611,6 @@ public static class Utils
         else Logger.Msg("No Player to change to Refugee.", "Add Refugee");
     }
 
-    public static int ToInt(this string input)
-    {
-        using MD5 md5 = MD5.Create();
-        byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-        int hashInt = BitConverter.ToInt32(hashBytes, 0);
-
-        hashInt = Math.Abs(hashInt);
-
-        string hashStr = hashInt.ToString().PadLeft(8, '0');
-        if (hashStr.Length > 8)
-        {
-            hashStr = hashStr[..8];
-        }
-
-        return int.Parse(hashStr);
-    }
-
     public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "", bool noSplit = false)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -1898,7 +1889,7 @@ public static class Utils
                     if (Main.LoversPlayers.Exists(x => x.PlayerId == seer.PlayerId)) SelfMark.Append(ColorString(GetRoleColor(CustomRoles.Lovers), " ♥"));
                     if (BallLightning.IsGhost(seer)) SelfMark.Append(ColorString(GetRoleColor(CustomRoles.BallLightning), "■"));
                     SelfMark.Append(Medic.GetMark(seer, seer));
-                    SelfMark.Append(Gaslighter.GetMark(seer, seer));
+                    SelfMark.Append(Gaslighter.GetMark(seer, seer, isForMeeting));
                     SelfMark.Append(Gamer.TargetMark(seer, seer));
                     SelfMark.Append(Sniper.GetShotNotify(seer.PlayerId));
                     if (Silencer.ForSilencer.Contains(seer.PlayerId)) SelfMark.Append(ColorString(GetRoleColor(CustomRoles.Silencer), "╳"));
@@ -2074,7 +2065,7 @@ public static class Utils
 
                 if (!GameStates.IsLobby)
                 {
-                    if (NameNotifyManager.GetNameNotify(seer, out var name)) SelfName = name;
+                    if (NameNotifyManager.GetNameNotify(seer, out var name) && name.Length > 0) SelfName = name;
 
                     switch (Options.CurrentGameMode)
                     {
@@ -2277,10 +2268,7 @@ public static class Utils
                                 case CustomRoles.BountyHunter when (Main.PlayerStates[seer.PlayerId].Role as BountyHunter).GetTarget(seer) == target.PlayerId && seer.IsAlive():
                                     TargetPlayerName = $"<color=#000000>{TargetPlayerName}</size>";
                                     break;
-                                case CustomRoles.Doomsayer when seer.IsAlive() && target.IsAlive() && GuesserIsForMeeting:
-                                    TargetPlayerName = $"{ColorString(GetRoleColor(CustomRoles.Doomsayer), $" {target.PlayerId}")} {TargetPlayerName}";
-                                    break;
-                                case CustomRoles.Lookout when seer.IsAlive() && target.IsAlive():
+                                case CustomRoles.Lookout when seer.IsAlive() && target.IsAlive() && !isForMeeting:
                                     TargetPlayerName = $"{ColorString(GetRoleColor(CustomRoles.Lookout), $" {target.PlayerId}")} {TargetPlayerName}";
                                     break;
                             }
@@ -2299,7 +2287,7 @@ public static class Utils
                             TargetMark.Append(Executioner.TargetMark(seer, target));
                             TargetMark.Append(Gamer.TargetMark(seer, target));
                             TargetMark.Append(Medic.GetMark(seer, target));
-                            TargetMark.Append(Gaslighter.GetMark(seer, target));
+                            TargetMark.Append(Gaslighter.GetMark(seer, target, isForMeeting));
                             TargetMark.Append(Totocalcio.TargetMark(seer, target));
                             TargetMark.Append(Romantic.TargetMark(seer, target));
                             TargetMark.Append(Lawyer.LawyerMark(seer, target));
@@ -2395,7 +2383,7 @@ public static class Utils
     public static void RpcChangeSkin(PlayerControl pc, NetworkedPlayerInfo.PlayerOutfit newOutfit)
     {
         Camouflage.SetPetForOutfitIfNecessary(newOutfit);
-        
+
         var sender = CustomRpcSender.Create(name: $"Utils.RpcChangeSkin({pc.Data.PlayerName})");
 
         pc.SetName(newOutfit.PlayerName);
@@ -2554,7 +2542,7 @@ public static class Utils
     public static (RoleTypes RoleType, CustomRoles CustomRole) GetRoleMap(byte seerId, byte targetId = byte.MaxValue)
     {
         if (targetId == byte.MaxValue) targetId = seerId;
-        return SelectRolesPatch.RpcSetRoleReplacer.RoleMap[(seerId, targetId)];
+        return StartGameHostPatch.RpcSetRoleReplacer.RoleMap[(seerId, targetId)];
     }
 
     public static void AfterMeetingTasks()
@@ -3028,7 +3016,7 @@ public static class Utils
             var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             using MemoryStream ms = new();
             stream?.CopyTo(ms);
-            ImageConversion.LoadImage(texture, ms.ToArray(), false);
+            texture.LoadImage(ms.ToArray(), false);
             return texture;
         }
         catch
