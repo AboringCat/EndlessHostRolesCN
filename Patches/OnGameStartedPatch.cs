@@ -229,6 +229,7 @@ internal class ChangeRoleSettings
 
             Main.IntroDestroyed = false;
             ShipStatusBeginPatch.RolesIsAssigned = false;
+            GameEndChecker.ShowAllRolesWhenGameEnd = false;
 
             RandomSpawn.CustomNetworkTransformPatch.NumOfTP = [];
 
@@ -366,7 +367,7 @@ internal static class StartGameHostPatch
 {
     private static AmongUsClient AUClient;
 
-    private static readonly Dictionary<CustomRoles, List<byte>> BasisChangingAddons = [];
+    public static readonly Dictionary<CustomRoles, List<byte>> BasisChangingAddons = [];
     private static Dictionary<RoleTypes, int> RoleTypeNums = [];
 
     private static readonly Dictionary<byte, bool> DataDisconnected = [];
@@ -397,10 +398,7 @@ internal static class StartGameHostPatch
 
     private static System.Collections.IEnumerator StartGameHost()
     {
-        if (LobbyBehaviour.Instance)
-        {
-            LobbyBehaviour.Instance.Despawn();
-        }
+        if (LobbyBehaviour.Instance) LobbyBehaviour.Instance.Despawn();
 
         if (!ShipStatus.Instance)
         {
@@ -413,20 +411,17 @@ internal static class StartGameHostPatch
         }
 
         float timer = 0f;
-        for (;;)
+        while (true)
         {
             bool stopWaiting = true;
-            int maxTimer = 10;
-            if (GameOptionsManager.Instance.CurrentGameOptions.MapId == 5 || GameOptionsManager.Instance.CurrentGameOptions.MapId == 4)
+            int maxTimer = GameOptionsManager.Instance.CurrentGameOptions.MapId is 5 or 4 ? 20 : 15;
+            lock (AUClient.allClients)
             {
-                maxTimer = 15;
-            }
-
-            var allClients = AUClient.allClients; // Possibly .ToArray().ToList() is needed
-            lock (allClients)
-            {
-                foreach (ClientData clientData in AUClient.allClients)
+                // For loop is necessary, or else when a client times out, a foreach loop will throw:
+                // System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+                for (int i = 0; i < AUClient.allClients.Count; i++)
                 {
+                    ClientData clientData = AUClient.allClients[i]; // False error
                     if (clientData.Id != AUClient.ClientId && !clientData.IsReady)
                     {
                         if (timer < maxTimer)
@@ -444,11 +439,7 @@ internal static class StartGameHostPatch
             }
 
             yield return null;
-            if (stopWaiting)
-            {
-                break;
-            }
-
+            if (stopWaiting) break;
             timer += Time.deltaTime;
         }
 

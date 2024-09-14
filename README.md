@@ -332,7 +332,7 @@ You can also report bugs and suggest features in the #bug-reports and #suggestio
 ### :star: [TOHO](https://github.com/Limeau/TownofHost-Optimized) :
 
 >
-> - Reference: Some role ideas (Tank, Deadlined, Journalist, Grapper, Negotiator, Hypnotist)
+> - Reference: Some role ideas (Tank, Deadlined, Journalist, Grappler, Negotiator, Hypnotist, etc.)
 >
 
 ### :star: [Mini.RegionInstall](https://github.com/miniduikboot/Mini.RegionInstall) :
