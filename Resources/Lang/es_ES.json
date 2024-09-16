@@ -746,8 +746,13 @@
   "FFFInfoLong": "(Neutrales):\\nComo el odiador, puedes matar tantas veces como quieras sin tiempo de reutilización y tienes la visión de impostor. Solo puedes matar Amantes, jugadores reclutados, y roles reclutadores, o morirás. Ganar es posible si mataste al menos a un jugador durante el juego.",
   "GamerInfoLong": "(Neutrals):\\nIf the number of Demons is greater than Crewmates, Demons win. Demons have a unique health-based killing system, and killing takes effect when one's health is exhausted. If a Demon's health is consumed but they are not killed, the murderer will see a shield animation as a reminder.",
   "DarkHideInfoLong": "(Neutrals):\\nThe Stalker can kill anyone and cause electricity sabotage. They cannot vent. If the Stalker is alive and the Impostor or Crewmate wins, the Stalker wins alone.",
+<<<<<<< HEAD
   "WorkaholicInfoLong": "(Neutrals):\\nWorkaholics win by completing more tasks, maybe even after their death.",
   "CollectorInfoLong": "(Neutrals):\\nCollectors can gather all the votes cast by a target in a meeting. When they collect the specified number of votes, they win, even over exiled players.",
+=======
+  "WorkaholicInfoLong": "(Neutrales):\\nLos Adictos al Trabajo ganan completando más tareas, talvez incluso después de morir.",
+  "CollectorInfoLong": "(Neutrales):\\nLos Recaudadores pueden recolectar todos los votos emitidos por un objetivo en una reunión. Cuando recolecte el número específico de votos, ganará, incluso sobre jugadores exiliados.",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "PoisonerInfoLong": "(Neutrals):\\nAs the Poisoner, your kills are delayed. Kill everyone to win.",
   "SidekickInfoLong": "(Neutrals):\\nHelp your Jackal kill. If they die, you will become the new Jackal. Upon transforming, convert a player with your Kill button. You (and all other Jackals and Sidekicks) win once you achieve majority and no other evil teams exist.",
   "ProvocateurInfoLong": "(Neutrals):\\nThe Provocateur can kill any target with the kill button. If the target loses at the end of the game, the Provocateur wins with the winning team.",
@@ -1579,10 +1584,17 @@
   "EvolverProgress.Vent": " (V: {0})",
   "EvolverProgress.Sabotage": " (S: {0})",
   "WorkaholicCannotWinAtDeath": "No puede ganar después de haber muerto",
+<<<<<<< HEAD
   "WorkaholicVisibleToEveryone": "Everyone knows who the <color=#008b8b>Workaholic</color> is",
   "WorkaholicGiveAdviceAlive": "Advice at first meeting if alive, can win after death, ghost tasks ON",
   "WorkaholicSpeed": "<color=#008b8b>Workaholic</color> Speed",
   "DoctorVisibleToEveryone": "Everyone knows who the <color=#80ffdd>Doctor</color> is",
+=======
+  "WorkaholicVisibleToEveryone": "Todos saben quien es el <color=#008b8b>Adicto al Trabajo</color>",
+  "WorkaholicGiveAdviceAlive": "Consejo en primera reunión si está vivo, puede ganar después de morir, tareas de fantasma ENCENDIDAS",
+  "WorkaholicSpeed": "Velocidad del <color=#008b8b>Adicto al Trabajo</color>",
+  "DoctorVisibleToEveryone": "Todos saben quien es el <color=#80ffdd>Doctor</color>",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "GuardSpellTimes": "Amount of Cursed Shields",
   "JinxSpellTimes": "Amount of Jinx Spells",
   "CollectorCollectAmount": "Número requerido de votos",
@@ -1948,8 +1960,13 @@
   "DetectiveNoticeAddons": "\\nThe victim's add-ons are: <b>{0}</b>",
   "DetectiveNoticeKillTime": "\\nThe victim died <b>{0}</b> seconds ago",
   "SleuthMsg": "{0}'s role is: {1}",
+<<<<<<< HEAD
   "GodNoticeAlive": "During the meeting, each player felt a revelation from heaven, and it turned out that God is still alive!",
   "WorkaholicAdviceAlive": "It's not recommended to kill or vote <b>{0}</b> out. Doing so will help them finish their tasks quicker.",
+=======
+  "GodNoticeAlive": "Durante la reunión, cada jugador sintió una revelación del cielo, ¡y resulta que Dios sigue vivo!",
+  "WorkaholicAdviceAlive": "No se recomienda matar o expulsar a <b>{0}</b>. Hacerlo lo ayudará a acabar sus tareas más rápido.",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "GuessDead": "Sorry, but it's impossible to guess roles after your death",
   "GuessSuperStar": "The Super Star can't be guessed.... you thought it would be that easy, right?",
   "GuessNotifiedBait": "Bait can't be guessed because it was announced, you thought it would be that easy, right?",
@@ -1971,10 +1988,17 @@
   "LaughToWhoGuessSelf": "Tried to guess, who tried to self-guess! It's you! Ahah!",
   "GuessSameCTAPlayer": "You tried to guess a player who is in your team.... You're not that smart, are you?",
   "GuessDisabled": "Sorry, the host restricted guessing for your role.",
+<<<<<<< HEAD
   "GuessWorkaholic": "Sorry, you can't guess a revealed Workaholic as that would be unfair.",
   "GuessDoctor": "Sorry, you can't guess a revealed Doctor as that would be unfair.",
   "GuessMayor": "Sorry, you can't guess a revealed Mayor as that would be unfair.",
   "GuessKnighted": "Sorry, Monarchs cannot guess Knighted.",
+=======
+  "GuessWorkaholic": "Lo siento, no puedes adivinar a un Adicto al Trabajo revelado pues eso sería injusto.",
+  "GuessDoctor": "Lo siento, no puedes adivinar a un Doctor revelado pues eso sería injusto.",
+  "GuessMayor": "Lo siento, no puedes adivinar a un Alcalde revelado, ya que eso sería injusto.",
+  "GuessKnighted": "Lo siento, los Monarcas no pueden adivinar Titulados.",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "ShotBlank": "You shot a blank!",
   "GuessMonarch": "You're knighted, so you cannot guess the Monarch.",
   "GuessShielded": "Sorry, you can't guess the player who is shielded by Medic",
@@ -2416,9 +2440,15 @@
   "MessageFromEAC": "★ EAC ★",
   "DetectiveNoticeTitle": "★ Message for the Detective ★",
   "GuessKillTitle": "★ Message about Guessing ★",
+<<<<<<< HEAD
   "CyberStarNewsTitle": "★ Urgent news ★",
   "GodAliveTitle": "★ Message about God ★",
   "WorkaholicAliveTitle": "★ Message about Workaholic ★",
+=======
+  "CyberStarNewsTitle": "★ Noticias urgentes ★",
+  "GodAliveTitle": "★ Mensaje sobre Dios ★",
+  "WorkaholicAliveTitle": "★ Mensaje sobre el Adicto al Trabajo ★",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "BaitAliveTitle": "★ Message about Bait ★",
   "MessageFromKPD": "★ KARPED1EM ★",
   "MessageFromGurge44": "★ Gurge44 ★",
@@ -4423,7 +4453,7 @@
   "RG.Hit": "<#ffff00>The hit landed on one of your bullets!\\nBetter luck next time!</color>",
   "RG.NoHit": "<#00ffa5>You survived, despite putting in <#8cffff>{0}</color> bullets.\\nYour kill cooldown was reduced by <#8cffff>{1}s</color>!</color>",
   "RG.Suffix": "<#00ffa5>Bullets:</color> <b>{0}</b>",
-  "Agitater": "Agitator",
+  "Agitater": "Agitador",
   "AgitaterInfo": "Pass a Bomb onto others",
   "AgitaterInfoLong": "(Neutrals):\\nAs the Agitater, your premise is essentially Hot Potato.\\n\\nUse your kill button on a player to pass the bomb.\\nThis can only be done once per round.\\n\\nThe player who receives the bomb will be notified when receiving said bomb, in which they need to pass it to another player by getting near a player.\\n\\nWhen a meeting is called, the player with the bomb dies.\\n\\nIf trying to pass to Pestilence or a Veteran on alert, the bombed player dies instead.\\nOptionally, the Agitater cannot receive the bomb.",
   "AgitaterBombCooldown": "<color=#F4A460>Agitater</color> bomb coolodown",
@@ -4936,9 +4966,15 @@
   "WinnerRoleText.Egoist": "¡El Egoísta Gana!",
   "WinnerRoleText.Gamer": "¡El Demonio Gana!",
   "WinnerRoleText.DarkHide": "Stalker Wins!",
+<<<<<<< HEAD
   "WinnerRoleText.Workaholic": "Workaholic Wins!",
   "WinnerRoleText.Agitater": "Agitater Wins!",
   "WinnerRoleText.Collector": "Collector Wins!",
+=======
+  "WinnerRoleText.Workaholic": "¡El Adicto al Trabajo Gana!",
+  "WinnerRoleText.Agitater": "Agitator Wins!",
+  "WinnerRoleText.Collector": "¡El Recaudador Gana!",
+>>>>>>> fc0287e1 (New translations en_us.json (Spanish))
   "WinnerRoleText.BloodKnight": "Blood Knight Wins!",
   "WinnerRoleText.Poisoner": "Poisoner Wins!",
   "WinnerRoleText.HexMaster": "Hex Master Wins!",
