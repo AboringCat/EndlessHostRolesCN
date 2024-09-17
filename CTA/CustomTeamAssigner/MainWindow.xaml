@@ -16,21 +16,16 @@ README file in the root directory of this source tree.
 
     <Window.Resources>
         <Style TargetType="Button">
-<<<<<<< HEAD
-            <Setter Property="Background" Value="Orange"/>
-            <Setter Property="Foreground" Value="White"/>
-=======
             <Setter Property="Background" Value="#2D2D2D"/>
             <Setter Property="Foreground" Value="#FFFFFF"/>
->>>>>>> c36528e9 (CTA App => EHR Control Panel)
-            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontSize" Value="27"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="10"/>
             <Setter Property="Margin" Value="10"/>
-            <Setter Property="Width" Value="440"/>
-            <Setter Property="Height" Value="70"/>
+            <Setter Property="Width" Value="370"/>
+            <Setter Property="Height" Value="60"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Template">
@@ -44,12 +39,6 @@ README file in the root directory of this source tree.
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-<<<<<<< HEAD
-                    <Setter Property="Background" Value="Orange"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="DarkOrange"/>
-=======
                     <Setter Property="Background" Value="#3E3E3E"/>
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
@@ -62,7 +51,39 @@ README file in the root directory of this source tree.
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.EnterActions>
->>>>>>> c36528e9 (CTA App => EHR Control Panel)
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10,0,10,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)" To="White" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation Storyboard.TargetProperty="(Label.Foreground).(SolidColorBrush.Color)" To="LightGray" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#707070"/>
+                    <Setter Property="Opacity" Value="0.5"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -86,49 +107,68 @@ README file in the root directory of this source tree.
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
         <Frame Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="10" Name="Navigator" NavigationUIVisibility="Hidden"/>
 
-<<<<<<< HEAD
-        <Label Content="自定义团队分配" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="Cyan" Name="Title"/>
-
-        <Button Content="新建预设" Grid.Column="1" Grid.Row="3" Click="CreateNewPlaySet"/>
-        <Button Content="加载预设" Grid.Column="1" Grid.Row="5" Click="ImportPlaySet"/>
-
-        <Button Content="退出" Grid.Column="1" Grid.Row="8" Click="Exit"/>
-=======
-        <Label Content="EHR Control Panel" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" Name="Title"/>
+        <Label Content="EHR Control Panel" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" FontSize="70" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Foreground="LightGray" Name="Title"/>
 
         <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="4" Background="#2D2D2D" CornerRadius="20" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Name="ButtonGroup">
             <StackPanel>
-                <Label Content="Custom Team Assignment" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray"></Label>
-                <Button Content="Create New Play-Set" Click="CreateNewPlaySet" RenderTransformOrigin="0.5,0.5">
+                <Label Content="Custom Team Assignment" FontSize="15" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray"/>
+                <Button Click="CreateNewPlaySet" RenderTransformOrigin="0.5,0.5">
                     <Button.RenderTransform>
                         <ScaleTransform/>
                     </Button.RenderTransform>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/add.svg" Name="AddButtonImage" Width="30" Height="30"/>
+                        <TextBlock Text="Create New Play-Set" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </Button>
-                <Button Content="Import Play-Set" Click="ImportPlaySet" RenderTransformOrigin="0.5,0.5">
+                <Button Click="ImportPlaySet" RenderTransformOrigin="0.5,0.5">
                     <Button.RenderTransform>
                         <ScaleTransform/>
                     </Button.RenderTransform>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/import.svg" Name="ImportButtonImage" Width="30" Height="30"/>
+                        <TextBlock Text="Import Play-Set" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </Button>
             </StackPanel>
         </Border>
 
-        <Button Content="Quiz Master Questions" Grid.Column="1" Grid.Row="7" Click="SettingsClick" RenderTransformOrigin="0.5,0.5" Foreground="LightGray">
+        <Button Grid.Column="0" Grid.Row="7" Grid.RowSpan="2" Click="QMQuestionsClick" RenderTransformOrigin="0.5,0.5" Foreground="LightGray">
             <Button.RenderTransform>
                 <ScaleTransform/>
             </Button.RenderTransform>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Resources/question.svg" Name="QuestionButtonImage" Width="30" Height="30"/>
+                <TextBlock Text="Quiz Master Questions" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
         </Button>
 
-        <Button Content="Role Description Finder" Grid.Column="1" Grid.Row="8" Click="OpenRoleDescFinder" RenderTransformOrigin="0.5,0.5" Foreground="LightGray">
+        <Button Grid.Column="1" Grid.Row="7" Grid.RowSpan="2" Click="OpenRoleDescFinder" RenderTransformOrigin="0.5,0.5" Foreground="LightGray">
             <Button.RenderTransform>
                 <ScaleTransform/>
             </Button.RenderTransform>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Resources/search.svg" Name="SearchButtonImage" Width="30" Height="30"/>
+                <TextBlock Text="Role Description Finder" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
         </Button>
->>>>>>> c36528e9 (CTA App => EHR Control Panel)
+        
+        <Button Grid.Column="2" Grid.Row="7" Grid.RowSpan="2" Click="OpenTemplateCreator" RenderTransformOrigin="0.5,0.5" Foreground="LightGray">
+            <Button.RenderTransform>
+                <ScaleTransform/>
+            </Button.RenderTransform>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Resources/template.svg" Name="TemplateButtonImage" Width="30" Height="30"/>
+                <TextBlock Text="Template Creator" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
+        </Button>
+        
+        <Label Grid.Column="0" Grid.Row="9" Content="Loading SVG Images...." Name="LoadingLabel"></Label>
     </Grid>
 </Window>
