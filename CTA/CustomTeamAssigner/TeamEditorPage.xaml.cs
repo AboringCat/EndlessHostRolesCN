@@ -15,17 +15,21 @@ namespace CustomTeamAssigner
 {
     public partial class TeamEditorPage : Page
     {
+        public static TeamEditorPage Instance { get; private set; } = null!;
+        
         private readonly Team EditingTeam;
         private readonly List<CustomRoles> EditingTeamMembers;
 
         public TeamEditorPage(Team team)
         {
             InitializeComponent();
+            Instance = this;
             EditingTeam = team;
             EditingTeamMembers = team.TeamMembers;
             InitializeMembersGrid();
             InitializeComboBox();
             InitializeEditorFields();
+            MainWindow.ApplyAllImages();
         }
 
         void InitializeEditorFields()
@@ -46,7 +50,8 @@ namespace CustomTeamAssigner
             TeamMembersGrid.RowDefinitions.Clear();
             TeamMembersGrid.Children.Clear();
 
-            for (int i = 0; i < Utils.GetAllValidRoles().Count() / 3 + 1; i++)
+            int count = Utils.GetAllValidRoles().Count();
+            for (int i = 0; i < count / 3 + 1; i++)
             {
                 TeamMembersGrid.RowDefinitions.Add(new());
             }
@@ -86,12 +91,14 @@ namespace CustomTeamAssigner
 
             MainWindow.Instance.Navigator.NavigationService.Navigate(new PlaySetListerPage());
             Utils.SetMainWindowContents(Visibility.Collapsed);
+            MainWindow.ApplyAllImages();
         }
 
         void Cancel(object sender, RoutedEventArgs e)
         {
             MainWindow.Instance.Navigator.NavigationService.Navigate(new PlaySetListerPage());
             Utils.SetMainWindowContents(Visibility.Collapsed);
+            MainWindow.ApplyAllImages();
         }
 
         void Delete(object sender, RoutedEventArgs e)
@@ -99,6 +106,7 @@ namespace CustomTeamAssigner
             Utils.Teams.Remove(EditingTeam);
             MainWindow.Instance.Navigator.NavigationService.Navigate(new PlaySetListerPage());
             Utils.SetMainWindowContents(Visibility.Collapsed);
+            MainWindow.ApplyAllImages();
         }
 
         void AddMember(object sender, RoutedEventArgs e)
@@ -109,7 +117,7 @@ namespace CustomTeamAssigner
                 return;
             }
 
-            var role = Enum.Parse<CustomRoles>(((string)MemberComboBox.SelectedItem).GetCustomRole().ToString());
+            var role = ((string)MemberComboBox.SelectedItem).GetCustomRole();
             EditingTeamMembers.Add(role);
             MemberComboBox.Items.RemoveAt(MemberComboBox.SelectedIndex);
             AddMemberToGrid(role);
@@ -172,9 +180,23 @@ namespace CustomTeamAssigner
             TeamMembersGrid.Children.Add(button);
         }
 
-        void OverrideColorCheck(object sender, RoutedEventArgs e) => TeamColorTextBox.IsEnabled = OverrideColorCheckBox.IsChecked == true;
-        void OverrideTitleCheck(object sender, RoutedEventArgs e) => TeamTitleTextBox.IsEnabled = OverrideTitleCheckBox.IsChecked == true;
-        void OverrideSubTitleCheck(object sender, RoutedEventArgs e) => TeamSubTitleTextBox.IsEnabled = OverrideSubTitleCheckBox.IsChecked == true;
+        void OverrideColorCheck(object sender, RoutedEventArgs e)
+        {
+            if (TeamColorTextBox == null) return;
+            TeamColorTextBox.IsEnabled = OverrideColorCheckBox.IsChecked == true;
+        }
+
+        void OverrideTitleCheck(object sender, RoutedEventArgs e)
+        {
+            if (TeamTitleTextBox == null) return;
+            TeamTitleTextBox.IsEnabled = OverrideTitleCheckBox.IsChecked == true;
+        }
+
+        void OverrideSubTitleCheck(object sender, RoutedEventArgs e)
+        {
+            if (TeamSubTitleTextBox == null) return;
+            TeamSubTitleTextBox.IsEnabled = OverrideSubTitleCheckBox.IsChecked == true;
+        }
 
         void ColorTextChanged(object sender, TextChangedEventArgs e)
         {
