@@ -47,7 +47,8 @@ internal static class CustomRolesHelper
         CustomRoles.Potato or
         CustomRoles.Runner or
         CustomRoles.CTFPlayer or
-        CustomRoles.NDPlayer;
+        CustomRoles.NDPlayer or
+        CustomRoles.RRPlayer;
 
     public static RoleBase GetRoleClass(this CustomRoles role)
     {
@@ -329,6 +330,9 @@ internal static class CustomRolesHelper
             CustomRoles.Venter => CustomRoles.Impostor,
             CustomRoles.Agent => CustomRoles.Impostor,
             CustomRoles.Taskinator => CustomRoles.Crewmate,
+            
+            // Room Rush
+            CustomRoles.RRPlayer => CustomRoles.Engineer,
 
             _ => role.IsImpostor() ? CustomRoles.Impostor : CustomRoles.Crewmate
         };
@@ -374,6 +378,8 @@ internal static class CustomRolesHelper
             CustomRoles.CTFPlayer => RoleTypes.Shapeshifter,
             // Natural Disasters
             CustomRoles.NDPlayer => RoleTypes.Crewmate,
+            // Room Rush
+            CustomRoles.RRPlayer => RoleTypes.Engineer,
             // Standard
             CustomRoles.Executioner => Executioner.CRoleChangeRoles[Executioner.ChangeRolesAfterTargetKilled.GetValue()].GetDYRole(),
             CustomRoles.Sheriff => UsePets && Sheriff.UsePet.GetBool() ? RoleTypes.GuardianAngel : RoleTypes.Impostor,
