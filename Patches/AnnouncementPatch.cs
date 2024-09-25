@@ -93,14 +93,14 @@ public class ModNewsHistory
             // EHR v4.8.0
             var news = new ModNews
             {
-                Number = 100000,
+                Number = 100003,
                 Title = "EndlessHostRoles v4.8.0",
                 SubTitle = "★★★★很重大的更新！★★★★",
-                ShortTitle = "★EHR v4.8.0",
-                Text = "已支持最新的AU版本：2024.9.\n"
+                ShortTitle = "EHR v4.8.0",
+                Text = "已支持最新的AU版本:2024.9.\n"
                        + "\n【基于】\n - 最新的TOHE测试版\r\n"
-                       + "\n【优化】\n - 众生自由，躲猫猫2个游戏模式现在不会卡顿\r\n"
-                       + "\n【新增】\n - 新模式RoomRush\r\n - Background image reverted to use the AU v2023.3.28 size due to the recommended Among Us version being v2023.3.28\r\n - Many other unlisted changes\r\n - Mario renamed to Vector due to copyright concerns\r\n"
+                       + "\n【优化】\n - 众生自由,躲猫猫2个游戏模式现在不会卡顿\r\n"
+                       + "\n【新增】\n - 新模式:抢椅子\r\n于抢椅子玩法之内,每个人需要抢到椅子,椅子所在的房间在游戏内会有提示,只要到达指定的房间视为抢到了椅子,但是最后一个到达指定房间的玩家死亡,苟活即是胜利!\nBUT!如果倒计时结束还没有到达指定房间,不管几个都会死!\n为了增加点乐子,前两个玩家到达指定的房间之后倒计时会骤然缩短!所以尽快!\n依据设置,玩家还可以使用管道哦!\n哦对了,游戏过程中可能会有些小插曲,敬请期待吧!"
                        + "\n【New Features】\n - ###Impostors\n - Councillor\r\n - Deathpact (role by papercut on Discord)\r\n - Saboteur (25% chance to replace Inhibitor)\r\n - Consigliere (by Yumeno from TOHY)\r\n - Dazzler (role by papercut on Discord)\r\n - Devourer (role by papercut on Discord)\r\n"
                        + "\n ### Crewmates\n - Addict (role by papercut on Discord)\r\n - Tracefinder\r\n - Deputy\r\n - Merchant (role by papercut on Discord)\r\n - Oracle\r\n - Spiritualist (role by papercut on Discord)\r\n - Retributionist\r\n- Guardian\r\n - Monarch\r\n"
                        + "\n ### Neutrals\n - Maverick\r\n - Cursed Soul\r\n - Vulture (role by ryuk on Discord)\r\n - Jinx\r\n - Pickpocket\r\n - Ritualist\r\n - Traitor\r\n"
