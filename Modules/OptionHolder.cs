@@ -28,6 +28,7 @@ public enum CustomGameMode
     Speedrun = 0x07,
     CaptureTheFlag = 0x08,
     NaturalDisasters = 0x09,
+    RoomRush = 0x0A,
     All = int.MaxValue
 }
 
@@ -62,7 +63,8 @@ public static class Options
         "HideAndSeek",
         "Speedrun",
         "CaptureTheFlag",
-        "NaturalDisasters"
+        "NaturalDisasters",
+        "RoomRush"
     ];
 
     private static Dictionary<CustomRoles, int> roleCounts;
@@ -124,10 +126,6 @@ public static class Options
         "CamouflageMode.Default",
         "CamouflageMode.Host",
         "CamouflageMode.Karpe",
-        "CamouflageMode.Lauryn",
-        "CamouflageMode.Moe",
-        "CamouflageMode.Pyro",
-        "CamouflageMode.ryuk",
         "CamouflageMode.Gurge44",
         "CamouflageMode.TommyXL"
     ];
@@ -197,6 +195,7 @@ public static class Options
     public static OptionItem ShowNKRemainOnEject;
     public static OptionItem ShowTeamNextToRoleNameOnEject;
     public static OptionItem CheatResponses;
+    public static OptionItem EnableMovementChecking;
     public static OptionItem LowLoadMode;
     public static OptionItem DeepLowLoad;
     public static OptionItem DisableVoteBan;
@@ -791,6 +790,7 @@ public static class Options
             6 => CustomGameMode.Speedrun,
             7 => CustomGameMode.CaptureTheFlag,
             8 => CustomGameMode.NaturalDisasters,
+            9 => CustomGameMode.RoomRush,
             _ => CustomGameMode.Standard
         };
 
@@ -1216,6 +1216,9 @@ public static class Options
         CheatResponses = new StringOptionItem(19319, "CheatResponses", CheatResponsesName, 2, TabGroup.SystemSettings)
             .SetHeader(true);
 
+        EnableMovementChecking = new BooleanOptionItem(19329, "EnableMovementChecking", true, TabGroup.SystemSettings)
+            .SetHeader(true);
+
 
         DisableVoteBan = new BooleanOptionItem(19320, "DisableVoteBan", true, TabGroup.SystemSettings, true);
 
@@ -1284,6 +1287,8 @@ public static class Options
         CTFManager.SetupCustomOption();
         // Natural Disasters
         NaturalDisasters.SetupCustomOption();
+        // Room Rush
+        RoomRush.SetupCustomOption();
 
         yield return null;
 
@@ -1359,11 +1364,9 @@ public static class Options
 
         // Random Spawn
         RandomSpawn = new BooleanOptionItem(22000, "RandomSpawn", false, TabGroup.GameSettings)
-            .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(19, 188, 233, byte.MaxValue));
         AirshipAdditionalSpawn = new BooleanOptionItem(22010, "AirshipAdditionalSpawn", false, TabGroup.GameSettings)
-            .SetParent(RandomSpawn)
-            .SetGameMode(CustomGameMode.Standard);
+            .SetParent(RandomSpawn);
 
         // Airship Variable Electrical
         AirshipVariableElectrical = new BooleanOptionItem(22100, "AirshipVariableElectrical", false, TabGroup.GameSettings)

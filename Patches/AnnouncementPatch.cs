@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.Data;
-using LibCpp2IL;
 using AmongUs.Data.Player;
-using System.Text.Json;
 using Assets.InnerNet;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Newtonsoft.Json.Linq;
-using UnityEngine;
-using UnityEngine.Networking;
 
 namespace EHR;
 
-// code credit https://github.com/Yumenopai/TownOfHost_Y
-[HarmonyPatch]
+// ##https://github.com/Yumenopai/TownOfHost_Y
 public class ModNews
 {
     public int Number;
@@ -30,7 +22,7 @@ public class ModNews
 
     public Announcement ToAnnouncement()
     {
-        var result = new Announcement
+        return new()
         {
             Number = Number,
             Title = Title,
@@ -41,91 +33,104 @@ public class ModNews
             Date = Date,
             Id = "ModNews"
         };
-
-        return result;
     }
+}
+
+[HarmonyPatch]
+public class ModNewsHistory
+{
     public static List<ModNews> AllModNews = [];
-    public static string ModNewsURL = "https://raw.githubusercontent.com/AboringCat/EndlessHostRolesCN/main/Resources/WhatsNew/modNews-";
-    static bool downloaded = false;
-    public ModNews(int Number, string Title, string SubTitle, string ShortTitle, string Text, string Date)
-    {
-        this.Number = Number;
-        this.Title = Title;
-        this.SubTitle = SubTitle;
-        this.ShortTitle = ShortTitle;
-        this.Text = Text;
-        this.Date = Date;
-        AllModNews.Add(this);
-    }
 
-    [HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.Init)), HarmonyPostfix]
-    public static void Initialize_Postfix(ref Il2CppSystem.Collections.IEnumerator __result)
+    // 
+    public static void Init()
     {
-        static IEnumerator FetchBlacklist()
+        // When creating new news, you can not delete old news
         {
-            if (downloaded)
+            // EHR v2.4.3
+            var news = new ModNews
             {
-                yield break;
-            }
-            downloaded = true;
-            ModNewsURL += TranslationController.Instance.currentLanguage.languageID switch
-            {
-                SupportedLangs.German => "de_DE.json",
-                SupportedLangs.Latam => "es_419.json",
-                SupportedLangs.Spanish => "es_ES.json",
-                SupportedLangs.Filipino => "fil_PH.json",
-                SupportedLangs.French => "fr_FR.json",
-                SupportedLangs.Italian => "it_IT.json",
-                SupportedLangs.Japanese => "ja_JP.json",
-                SupportedLangs.Korean => "ko_KR.json",
-                SupportedLangs.Dutch => "nl_NL.json",
-                SupportedLangs.Brazilian => "pt_BR.json",
-                SupportedLangs.Russian => "ru_RU.json",
-                SupportedLangs.SChinese => "zh_CN.json",
-                SupportedLangs.TChinese => "zh_TW.json",
-                _ => "en_US.json", //English and any other unsupported language
+                Number = 100001,
+                Title = "TownOfHostEdited v2.5.0",
+                SubTitle = "★★★★Another big update, maybe bigger?★★★★",
+                ShortTitle = "★EHR v2.5.0",
+                Text = "<size=150%>Welcome to EHR v2.5.0.</size>\n\n<size=125%>Support for Among Us v2023.7.11 and v2023.7.12</size>\n"
+                       + "\n【Base】\n - Base on TOH v4.1.2\r\n"
+                       + "\n【Fixes】\n - Various bug fixes\n\r"
+                       + "\n【Changes】\n - Hex Master hex icon changed to separate it from Spellcaster\n - Fortune Teller moved to Experimentals due to a planned and unfinished rework\n\r"
+                       + "\n【New Features】\n - New role: Twister (role by papercut on Discord)\n\r - New role: Chameleon (from Project: Lotus)\n\r - New role: Morphling\n\r - New role: Inspector (role by ryuk on Discord)\n\r - New role: Medusa\n\r - New add-on: Lazy\n\r - New add-on: Gravestone\n\r - New add-on: Autopsy (from TOHY)\n\r - New add-on: Loyal\n\r - New add-on: Visionary\n\r- New experimental role: Spiritcaller (role by papercut on Discord)\n\r"
+                       + "\n【Role Changes】\n - Various changes were made, such as an update to Opportunist\n\r",
+
+                Date = "2023-7-14T00:00:00Z"
             };
-            var request = UnityWebRequest.Get(ModNewsURL);
-            yield return request.SendWebRequest();
-            if (request.isNetworkError || request.isHttpError)
-            {
-                downloaded = false;
-                Logger.Info("ModNews Error Fetch:" + request.responseCode.ToString(), "ModNews");
-                yield break;
-            }
-
-            var jsonDocument = JsonDocument.Parse(request.downloadHandler.text);
-            var newsArray = jsonDocument.RootElement.GetProperty("News");
-
-            foreach (var newsElement in newsArray.EnumerateArray())
-            {
-                var number = int.Parse(newsElement.GetProperty("Number").GetString());
-                var title = newsElement.GetProperty("Title").GetString();
-                var subTitle = newsElement.GetProperty("Subtitle").GetString();
-                var shortTitle = newsElement.GetProperty("Short").GetString();
-                var body = newsElement.GetProperty("Body").EnumerateArray().ToStringEnumerable().ToString();
-                var dateString = newsElement.GetProperty("Date").GetString();
-                // Create ModNews object
-                ModNews _ = new(number, title, subTitle, shortTitle, body, dateString);
-            }
+            AllModNews.Add(news);
         }
-        __result = Effects.Sequence(FetchBlacklist().WrapToIl2Cpp(), __result);
-    }
 
+        {
+            // EHR v2.4.2
+            var news = new ModNews
+            {
+                Number = 100000,
+                Title = "TownOfHostEdited v2.4.2",
+                SubTitle = "★★★★Ooooh bigger update★★★★",
+                ShortTitle = "★EHR v2.4.2",
+                Text = "Added in some new stuff, along with some bug fixes.\r\nAmong Us v2023.3.28 is recommended so the roles work correctly.\n"
+                       + "\n【Base】\n - Base on TOH v4.1.2\r\n"
+                       + "\n【Fixes】\n - Fixed various black screen bugs (some still exist but should be less common)\r\n - Other various bug fixes (they're hard to keep track of)\r\n"
+                       + "\n【Changes】\n - Judge now supports Guesser Mode\r\n - Background image reverted to use the AU v2023.3.28 size due to the recommended Among Us version being v2023.3.28\r\n - Many other unlisted changes\r\n - Mario renamed to Vector due to copyright concerns\r\n"
+                       + "\n【New Features】\n - ###Impostors\n - Councillor\r\n - Deathpact (role by papercut on Discord)\r\n - Saboteur (25% chance to replace Inhibitor)\r\n - Consigliere (by Yumeno from TOHY)\r\n - Dazzler (role by papercut on Discord)\r\n - Devourer (role by papercut on Discord)\r\n"
+                       + "\n ### Crewmates\n - Addict (role by papercut on Discord)\r\n - Tracefinder\r\n - Deputy\r\n - Merchant (role by papercut on Discord)\r\n - Oracle\r\n - Spiritualist (role by papercut on Discord)\r\n - Retributionist\r\n- Guardian\r\n - Monarch\r\n"
+                       + "\n ### Neutrals\n - Maverick\r\n - Cursed Soul\r\n - Vulture (role by ryuk on Discord)\r\n - Jinx\r\n - Pickpocket\r\n - Ritualist\r\n - Traitor\r\n"
+                       + "\n ### Add-ons\n - Double Shot (add-on by TommyXL)\r\n - Rascal\r\n"
+                       + "\n【Role Changes】\n - Mimic now has a setting to see the roles of dead players, due to how useless this add-on was\r\n - A revealed Workaholic can no longer be guessed\r\n - Doctor has a new setting like Workaholic to be revealed to all (currently exposes evil Doctors, use at your own risk)\r\n - Mayor has a setting for a TOS mechanic to reveal themselves\r\n - Warlock balancing\r\n - Cleaner balancing (resets kill cooldown to value set in Cleaner settings)\r\n - Updated Monarch\r\n- Removed speed boost from Mare\r\n"
+                       + "\n【Removals】\n - Removed Flash\r\n - Removed Speed Booster\r\n - Temporarily removed Oblivious",
+
+                Date = "2023-7-5T00:00:00Z"
+            };
+            AllModNews.Add(news);
+        }
+
+        {
+            // EHR v4.8.0
+            var news = new ModNews
+            {
+                Number = 100000,
+                Title = "EndlessHostRoles v4.8.0",
+                SubTitle = "★★★★很重大的更新！★★★★",
+                ShortTitle = "★EHR v4.8.0",
+                Text = "已支持最新的AU版本：2024.9.\n"
+                       + "\n【基于】\n - 最新的TOHE测试版\r\n"
+                       + "\n【优化】\n - 众生自由，躲猫猫2个游戏模式现在不会卡顿\r\n"
+                       + "\n【新增】\n - 新模式RoomRush\r\n - Background image reverted to use the AU v2023.3.28 size due to the recommended Among Us version being v2023.3.28\r\n - Many other unlisted changes\r\n - Mario renamed to Vector due to copyright concerns\r\n"
+                       + "\n【New Features】\n - ###Impostors\n - Councillor\r\n - Deathpact (role by papercut on Discord)\r\n - Saboteur (25% chance to replace Inhibitor)\r\n - Consigliere (by Yumeno from TOHY)\r\n - Dazzler (role by papercut on Discord)\r\n - Devourer (role by papercut on Discord)\r\n"
+                       + "\n ### Crewmates\n - Addict (role by papercut on Discord)\r\n - Tracefinder\r\n - Deputy\r\n - Merchant (role by papercut on Discord)\r\n - Oracle\r\n - Spiritualist (role by papercut on Discord)\r\n - Retributionist\r\n- Guardian\r\n - Monarch\r\n"
+                       + "\n ### Neutrals\n - Maverick\r\n - Cursed Soul\r\n - Vulture (role by ryuk on Discord)\r\n - Jinx\r\n - Pickpocket\r\n - Ritualist\r\n - Traitor\r\n"
+                       + "\n ### Add-ons\n - Double Shot (add-on by TommyXL)\r\n - Rascal\r\n"
+                       + "\n【Role Changes】\n - Mimic now has a setting to see the roles of dead players, due to how useless this add-on was\r\n - A revealed Workaholic can no longer be guessed\r\n - Doctor has a new setting like Workaholic to be revealed to all (currently exposes evil Doctors, use at your own risk)\r\n - Mayor has a setting for a TOS mechanic to reveal themselves\r\n - Warlock balancing\r\n - Cleaner balancing (resets kill cooldown to value set in Cleaner settings)\r\n - Updated Monarch\r\n- Removed speed boost from Mare\r\n"
+                       + "\n【Removals】\n - Removed Flash\r\n - Removed Speed Booster\r\n - Temporarily removed Oblivious",
+
+                Date = "2024-9-25T12:00:00Z"
+            };
+            AllModNews.Add(news);
+        }
+    }
 
     [HarmonyPatch(typeof(PlayerAnnouncementData), nameof(PlayerAnnouncementData.SetAnnouncements)), HarmonyPrefix]
-    public static bool SetModAnnouncements_Prefix(PlayerAnnouncementData __instance, [HarmonyArgument(0)] ref Il2CppReferenceArray<Announcement> aRange)
+    public static bool SetModAnnouncements( /*PlayerAnnouncementData __instance,*/ [HarmonyArgument(0)] ref Il2CppReferenceArray<Announcement> aRange)
     {
-        Logger.Info("AllModNews:" + AllModNews.Count, "ModNews");
-        AllModNews.Sort((a1, a2) => { return DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)); });
+        if (AllModNews.Count == 0)
+        {
+            Init();
+            AllModNews.Sort((a1, a2) => { return DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)); });
+        }
 
         List<Announcement> FinalAllNews = [];
         AllModNews.Do(n => FinalAllNews.Add(n.ToAnnouncement()));
-        foreach (var news in aRange)
+        foreach (Announcement news in aRange.ToArray())
         {
             if (!AllModNews.Any(x => x.Number == news.Number))
                 FinalAllNews.Add(news);
         }
+
         FinalAllNews.Sort((a1, a2) => { return DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)); });
 
         aRange = new(FinalAllNews.Count);
@@ -134,46 +139,4 @@ public class ModNews
 
         return true;
     }
-
-
-    [HarmonyPatch(typeof(AnnouncementPanel), nameof(AnnouncementPanel.SetUp)), HarmonyPostfix]
-    public static void SetUpPanel_Postfix(AnnouncementPanel __instance, [HarmonyArgument(0)] Announcement announcement)
-    {
-        if (announcement.Number < 100000) return;
-        var obj = new GameObject("ModLabel");
-        //obj.layer = -1;
-        obj.transform.SetParent(__instance.transform);
-        obj.transform.localPosition = new Vector3(-0.8f, 0.13f, 0.5f);
-        obj.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
-        var renderer = obj.AddComponent<SpriteRenderer>();
-        renderer.sprite = Utils.LoadSprite($"EHR.Resources.Images.ModNews.png", 250f);
-        renderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-    }
 }
-
-
-//    [HarmonyPatch(typeof(PlayerAnnouncementData), nameof(PlayerAnnouncementData.SetAnnouncements)), HarmonyPrefix]
-//    public static bool SetModAnnouncements_Prefix(PlayerAnnouncementData __instance, [HarmonyArgument(0)] ref Il2CppReferenceArray<Announcement> aRange)
-//    {
-//        if (AllModNews.Count == 0)
-//        {
-//            Init();
-//            AllModNews.Sort((a1, a2) => { return DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)); });
-//        }
-
-//        List<Announcement> FinalAllNews = [];
-//        AllModNews.Do(n => FinalAllNews.Add(n.ToAnnouncement()));
-//        foreach (var news in aRange.ToArray())
-//        {
-//            if (!AllModNews.Any(x => x.Number == news.Number))
-//                FinalAllNews.Add(news);
-//        }
-//        FinalAllNews.Sort((a1, a2) => { return DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)); });
-
-//        aRange = new(FinalAllNews.Count);
-//        for (int i = 0; i < FinalAllNews.Count; i++)
-//            aRange[i] = FinalAllNews[i];
-
-//        return true;
-//    }
-//}

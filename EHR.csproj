@@ -26,7 +26,6 @@
         <None Remove="SUI\**"/>
     </ItemGroup>
 
-
     <ItemGroup>
         <PackageReference Include="AmongUs.GameLibs.Steam" Version="2024.9.4"/>
         <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1"/>
@@ -43,5 +42,8 @@
     </ItemGroup>
     <Target Name="Roles" AfterTargets="Build">
         <Copy SourceFiles="CustomRoles.cs" DestinationFolder="CTA/CustomTeamAssigner/"/>
+    </Target>
+    <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/"/>
     </Target>
 </Project>

@@ -771,6 +771,9 @@ internal static class StartGameHostPatch
                 case CustomGameMode.NaturalDisasters:
                     NaturalDisasters.OnGameStart();
                     break;
+                case CustomGameMode.RoomRush:
+                    RoomRush.OnGameStart();
+                    break;
             }
 
             HudManager.Instance.SetHudActive(true);
@@ -817,6 +820,9 @@ internal static class StartGameHostPatch
                     break;
                 case CustomGameMode.NaturalDisasters:
                     GameEndChecker.SetPredicateToNaturalDisasters();
+                    break;
+                case CustomGameMode.RoomRush:
+                    GameEndChecker.SetPredicateToRoomRush();
                     break;
             }
 

@@ -47,7 +47,8 @@ internal static class CustomRolesHelper
         CustomRoles.Potato or
         CustomRoles.Runner or
         CustomRoles.CTFPlayer or
-        CustomRoles.NDPlayer;
+        CustomRoles.NDPlayer or
+        CustomRoles.RRPlayer;
 
     public static RoleBase GetRoleClass(this CustomRoles role)
     {
@@ -166,7 +167,7 @@ internal static class CustomRolesHelper
             CustomRoles.SuperStar => CustomRoles.Crewmate,
             CustomRoles.Hacker => CustomRoles.Shapeshifter,
             CustomRoles.Visionary => CustomRoles.Shapeshifter,
-            CustomRoles.Assassin => UsePets ? CustomRoles.Impostor : CustomRoles.Shapeshifter,
+            CustomRoles.Assassin => CustomRoles.Phantom,
             CustomRoles.Undertaker => UsePets ? CustomRoles.Impostor : CustomRoles.Shapeshifter,
             CustomRoles.Luckey => CustomRoles.Crewmate,
             CustomRoles.CyberStar => CustomRoles.Crewmate,
@@ -197,7 +198,7 @@ internal static class CustomRolesHelper
             CustomRoles.GuessManagerRole => CustomRoles.Crewmate,
             CustomRoles.Bane => CustomRoles.Crewmate,
             CustomRoles.Transmitter => CustomRoles.Crewmate,
-            CustomRoles.Altruist => CustomRoles.Engineer,
+            CustomRoles.Altruist => UsePets ? CustomRoles.Crewmate : CustomRoles.Engineer,
             CustomRoles.Negotiator => CustomRoles.Crewmate,
             CustomRoles.Grappler => CustomRoles.Crewmate,
             CustomRoles.Journalist => CustomRoles.Crewmate,
@@ -329,6 +330,9 @@ internal static class CustomRolesHelper
             CustomRoles.Venter => CustomRoles.Impostor,
             CustomRoles.Agent => CustomRoles.Impostor,
             CustomRoles.Taskinator => CustomRoles.Crewmate,
+            
+            // Room Rush
+            CustomRoles.RRPlayer => CustomRoles.Engineer,
 
             _ => role.IsImpostor() ? CustomRoles.Impostor : CustomRoles.Crewmate
         };
@@ -374,6 +378,8 @@ internal static class CustomRolesHelper
             CustomRoles.CTFPlayer => RoleTypes.Shapeshifter,
             // Natural Disasters
             CustomRoles.NDPlayer => RoleTypes.Crewmate,
+            // Room Rush
+            CustomRoles.RRPlayer => RoleTypes.Engineer,
             // Standard
             CustomRoles.Executioner => Executioner.CRoleChangeRoles[Executioner.ChangeRolesAfterTargetKilled.GetValue()].GetDYRole(),
             CustomRoles.Sheriff => UsePets && Sheriff.UsePet.GetBool() ? RoleTypes.GuardianAngel : RoleTypes.Impostor,
@@ -821,7 +827,7 @@ internal static class CustomRolesHelper
     {
         CustomRoles.Circumvent when pc.GetCustomRole() is CustomRoles.Swooper or CustomRoles.RiftMaker => false,
         CustomRoles.Oblivious when pc.Is(CustomRoles.Altruist) => false,
-        CustomRoles.AntiTP when pc.Is(CustomRoles.Transmitter) => false,
+        CustomRoles.AntiTP when pc.GetCustomRole() is CustomRoles.Transmitter or CustomRoles.Miner or CustomRoles.Escapee or CustomRoles.Tunneler => false,
         CustomRoles.Swift when pc.Is(CustomRoles.Stealth) => false,
         CustomRoles.Disco when pc.GetCustomRole() is CustomRoles.Chameleon or CustomRoles.Swooper or CustomRoles.Wraith or CustomRoles.Alchemist => false,
         CustomRoles.Egoist when pc.Is(CustomRoles.Gangster) => false,
