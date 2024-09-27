@@ -513,7 +513,7 @@ static class MapBehaviourShowPatch
 
         var player = PlayerControl.LocalPlayer;
 
-        if (player.GetCustomRole() == CustomRoles.NiceHacker && NiceHacker.playerIdList.ContainsKey(player.PlayerId))
+        if (player.GetCustomRole() == CustomRoles.NiceHacker && NiceHacker.PlayerIdList.ContainsKey(player.PlayerId))
         {
             Logger.Info("Modded Client uses Map", "NiceHacker");
             NiceHacker.MapHandle(player, __instance, opts);
