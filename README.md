@@ -47,7 +47,7 @@
 
 #### 如何安装测试版:
 
-1. 下载好文件 (EHR.dll) .
+1. 下载好文件 (EHR.dll) 。
 2. 转到你的AU下载路径 (Steam 用户通常在： `C:\Program Files (x86)\Steam\steamapps\common\Among Us` ,
   Epic 用户 `C:\Program Files\AmongUs` ,Microsoft Store 用户 `C:\Program Files\WindowsApps\InnerSloth.LLC-AmongUs_8wekyb3d8bbwe` )。
 3. 进入 `BepInEx` 文件夹。
