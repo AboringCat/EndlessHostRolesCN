@@ -8,9 +8,9 @@
 <p align="right">
 
 >### 声明
->本模组不是外挂，只是用于丰富原版AU游戏内容的增强玩法，如有疑问请咨询EHR的官方服务器；  
->本模组不隶属于树懒及其任何附加内容，该模组出现的任何问腿均与树懒无关，树懒也不会给模组分发许可证；  
->这个fork只是为了增强EHR的简体中文翻译并且添加公告，Crowdin的翻译项目暂不对外公布，也不会做多语言支持；  
+> 本模组不是外挂，只是用于丰富原版AU游戏内容的增强玩法，如有疑问请咨询EHR的官方服务器；  
+> 本模组不隶属于树懒及其任何附加内容，该模组出现的任何问腿均与树懒无关，树懒也不会给模组分发许可证；  
+> 这个fork只是为了增强EHR的简体中文翻译并且添加公告，Crowdin的翻译项目暂不对外公布，也不会做多语言支持；  
 <br>
 
 </p>
@@ -29,7 +29,7 @@
 
 # 安装方法
 
-Whichever is easier for you:
+任何一种方式都很容易:
 
 - 通过 [Mod Manager](https://goodloss.fr/mm) 自动安装。  
 - 或者跟随EHR网站的英文教程走: [EHR](https://sites.google.com/view/ehr-au)  
@@ -38,159 +38,30 @@ Whichever is easier for you:
 
 把下载链接分享出去！: [bit.ly/downloadehr](https://bit.ly/downloadehr)
 
-## Want to become a beta tester?
+## 想要获取内测权限？
 
-Join our Discord server and download the latest test build from the #test-builds channel.
-You do **NOT** need to pay, boost the server, donate, be a VIP, contributor or anything like that.
-In this mod and its discord server, everything is free.
-We don't want your money, we want your feedback.
-You can also report bugs and suggest features in the #bug-reports and #suggestions channels.
+加入作者的Discord服务器，再从 #test-builds 频道下载最新测试版即可。
+你**不需要**支付任何费用，我们只需要你的反馈。
+当然，如果你还想获取到指定职业的权限，只需要给服务器助力/捐赠/贡献代码/做做翻译...即可。
+你还可以在#bug-reports 和 #suggestions 这两个频道提供反馈/建议！
 
-#### How to install test builds:
+#### 如何安装测试版:
 
-1. Download the latest test build (EHR.dll) from the #test-builds channel.
-2. Go to your Among Us directory (usually `C:\Program Files (x86)\Steam\steamapps\common\Among Us` for Steam users,
-   `C:\Program Files\AmongUs` for Epic Games users, `C:\Program Files\WindowsApps\InnerSloth.LLC-AmongUs_8wekyb3d8bbwe`
-   for Microsoft Store users).
-3. Go into the `BepInEx` folder.
-4. Go into the `plugins` folder.
-5. Replace the existing `EHR.dll` file with the one you downloaded.
+1. 下载好文件 (EHR.dll) .
+2. 转到你的AU下载路径 (Steam 用户通常在： `C:\Program Files (x86)\Steam\steamapps\common\Among Us` ,
+  Epic 用户 `C:\Program Files\AmongUs` ,Microsoft Store 用户 `C:\Program Files\WindowsApps\InnerSloth.LLC-AmongUs_8wekyb3d8bbwe` )。
+3. 进入 `BepInEx` 文件夹。
+4. 继续进入 `plugins` 文件夹。
+5. 替换 `EHR.dll` 成你刚刚下载的版本即可。
 
-### Visit this website to find role descriptions: [Role description finder](https://gurge44.pythonanywhere.com/)
+### 去我们的官网查看职业介绍: [Role description finder](https://gurge44.pythonanywhere.com/)
 
-#### Over 400 roles and add-ons, 9 custom game modes, and a custom team assigner application, making EHR the most extensive mod for Among Us. And it's all free, and only the host needs to have the mod installed for the entire lobby to play!
 
-## List of Roles <span style="font-size: 12px;">(excluding Hide and Seek roles and vanilla roles)</span>
+## VIP 和 内部人员(并非指测试人员) 的权限差异
 
-| Crewmates         | Impostors       | Neutrals          | Add-ons        |
-|-------------------|-----------------|-------------------|----------------|
-| Addict            | Abyssbringer    | Agitator          | Antidote       |
-| Adrenaline        | Anonymous       | Amnesiac          | Anti-TP        |
-| Adventurer        | Anti Adminer    | Arsonist          | Asthmatic      |
-| Aid               | Arrogance       | Backstabber       | Autopsy        |
-| Alchemist         | Assumer         | Bandit            | Avenger        |
-| Bane              | Augmenter       | Bargainer         | Bait           |
-| Analyst           | Bard            | Beehive           | Busy           |
-| Autocrat          | Blackmailer     | Blood Knight      | Beartrap       |
-| Beacon            | Bomber          | Bubble            | Bewilder       |
-| Benefactor        | Bounty Hunter   | Chemist           | Bloodlust      |
-| Bodyguard         | Butcher         | Cherokious        | Bloodmoon      |
-| Camera Man        | Camouflager     | Collector         | Charmed        |
-| Car               | Capitalist      | Deathknight       | Circumvent     |
-| Catcher           | Cantankerous    | Demon             | Cleansed       |
-| Celebrity         | Changeling      | Doppelganger      | Clumsy         |
-| Chameleon         | Chronomancer    | Doomsayer         | Contagious     |
-| Chef              | Cleaner         | Eclipse           | Damocles       |
-| Clairvoyant       | Commander       | Enderman          | Deadlined      |
-| Cleanser          | Consigliere     | Evolver           | Deadly Quota   |
-| Convener          | Consort         | Executioner       | Disco          |
-| Copycat           | Councillor      | Follower          | Diseased       |
-| Coroner           | Crewpostor      | The Glitch        | Dynamo         |
-| Crusader          | Cursed Wolf     | God               | Disregarded    |
-| Dad               | Deathpact       | Hater             | Double Shot    |
-| Demolitionist     | Devourer        | Head Hunter       | Egoist         |
-| Deputy            | Disperser       | Hex Master        | Energetic      |
-| Detective         | Duellist        | Hookshot          | Evil Spirit    |
-| Detour            | Dazzler         | Imitator          | Finder         |
-| Dictator          | Echo            | Impartial         | Flash          |
-| Doctor            | Escapist        | Innocent          | Fool           |
-| Donut Delivery    | Eraser          | Jackal            | Giant          |
-| Door Master       | Evil Guesser    | Jester            | Glow           |
-| Pacifist          | Evil Tracker    | Jinx              | Gravestone     |
-| Drainer           | Fireworker      | Juggernaut        | Guardian Angel |
-| Druid             | Framer          | Lawyer            | Guesser        |
-| Electric          | Freezer         | Magician          | Haste          |
-| Enigma            | Gambler         | Vector            | Haunter        |
-| Escort            | Gangster        | Maverick          | Knighted       |
-| Express           | Generator       | Medusa            | Last Impostor  |
-| Investigator      | Godfather       | Mycologist        | Lazy           |
-| Fortune Teller    | Greedy          | Necromancer       | Lovers         |
-| Gaulois           | Hangman         | Nonplus           | Loyal          |
-| Goose             | Hitman          | Opportunist       | Lucky          |
-| Grappler          | Hypnotist       | Patroller         | Madmate        |
-| Grenadier         | Inhibitor       | Pelican           | Magnet         |
-| Guess Manager     | Kamikaze        | Pestilence        | Mare           |
-| Guardian          | Kidnapper       | Specter           | Messenger      |
-| Ignitor           | Killing Machine | Pickpocket        | Mimic          |
-| Insight           | Lightning       | Plaguebearer      | Minion         |
-| Inspector         | Librarian       | Infection         | Mischievous    |
-| Inquirer          | Lurker          | Poisoner          | Necroview      |
-| Jailor            | Mafioso         | Postman           | Nimble         |
-| Journalist        | Mastermind      | Predator          | Noisy          |
-| Judge             | Nemesis         | Provocateur       | Oblivious      |
-| Lazy Guy          | Mercenary       | Pursuer           | Onbound        |
-| Lighter           | Miner           | Pyromaniac        | Spurt          |
-| Lookout           | Morphling       | Quiz Master       | Sleep          |
-| Luckey            | Ninja           | Reckless          | Phantasm       |
-| Lyncher           | Nuker           | Revolutionist     | Physicist      |
-| Markseeker        | Nullifier       | Ritualist         | Rascal         |
-| Marshall          | Overheat        | Rogue             | Reach          |
-| Mathematician     | Parasite        | Romantic          | Recruit        |
-| Mayor             | Penguin         | Roulette Grandeur | Rookie         |
-| Mechanic          | Puppeteer       | Ruthless Romantic | Schizophrenic  |
-| Medic             | Quick Shooter   | Samurai           | Seer           |
-| Medium            | Renegade        | Schrödinger's Cat | Sleuth         |
-| Merchant          | Rift Maker      | Serial Killer     | Sonar          |
-| Telecommunication | Saboteur        | Shifter           | Stained        |
-| Mole              | Sapper          | Sidekick          | Taskcounter    |
-| Monarch           | Scavenger       | Simon             | Stealer        |
-| Mortician         | Silencer        | Soul Hunter       | Stressed       |
-| Nice Eraser       | Sniper          | Spiritcaller      | Swift          |
-| Nice Guesser      | Soul Catcher    | Sprayer           | Sunglasses     |
-| Hacker            | Swapster        | Stalker           | Tiebreaker     |
-| Swapper           | Swiftclaw       | Cultist           | Torch          |
-| Nightmare         | Swooper         | Sunnyboy          | Truant         |
-| Negotiator        | Stealth         | Tank              | Undead         |
-| Observer          | Time Thief      | Terrorist         | Unlucky        |
-| Oracle            | Trapster        | Tiger             | Warden         |
-| Oxyman            | Trickster       | Traitor           | Watcher        |
-| Paranoid          | Twister         | Tremor            | Workhorse      |
-| Perceiver         | Underdog        | Vengeance         | YouTuber       |
-| President         | Undertaker      | Vengeful Romantic |                |
-| Psychic           | Vampire         | Virus             |                |
-| Rabbit            | Ventriloquist   | Vulture           |                |
-| Randomizer        | Vindicator      | Wraith            |                |
-| Rhapsode          | Visionary       | Werewolf          |                |
-| Ricochet          | Warlock         | Weapon Master     |                |
-| Safeguard         | Wildling        | Workaholic        |                |
-| Scout             | Witch           |                   |                |
-| Security Guard    | Yin Yanger      |                   |                |
-| Sentinel          | Zombie          |                   |                |
-| Sentry            |                 |                   |                |
-| Sheriff           |                 |                   |                |
-| Shiftguard        |                 |                   |                |
-| Snitch            |                 |                   |                |
-| Socialite         |                 |                   |                |
-| Soothsayer        |                 |                   |                |
-| Spiritualist      |                 |                   |                |
-| Speedrunner       |                 |                   |                |
-| Speed Booster     |                 |                   |                |
-| Spy               |                 |                   |                |
-| Super Star        |                 |                   |                |
-| Task Manager      |                 |                   |                |
-| Telekinetic       |                 |                   |                |
-| Tether            |                 |                   |                |
-| Time Manager      |                 |                   |                |
-| Time Master       |                 |                   |                |
-| Toilet Master     |                 |                   |                |
-| Tornado           |                 |                   |                |
-| Transmitter       |                 |                   |                |
-| Transporter       |                 |                   |                |
-| Tracefinder       |                 |                   |                |
-| Tunneler          |                 |                   |                |
-| Ventguard         |                 |                   |                |
-| Veteran           |                 |                   |                |
-| Vigilante         |                 |                   |                |
-| Whisperer         |                 |                   |                |
-| Witness           |                 |                   |                |
 
-## VIP and Moderator perks
 
-:heavy_check_mark:   Can always use the command<br>
-:x:   Can never use the command<br>
-:question:    Host setting determines<br>
-
-| Feature   | Regular Players | VIP                | Moderator          | Host               |
+| 功能   | 普通玩家 | VIP                | 内部人员          | 房主               |
 |-----------|-----------------|--------------------|--------------------|--------------------|
 | /color    | :question:      | :heavy_check_mark: | :question:         | :heavy_check_mark: |
 | /rename   | :question:      | :heavy_check_mark: | :question:         | :heavy_check_mark: |
@@ -215,152 +86,148 @@ You can also report bugs and suggest features in the #bug-reports and #suggestio
 
 
 
-#### There are more game changing features, which you can find on our website: [EHR](https://sites.google.com/view/ehr-au)
+#### 访问官网查看更多详细信息: [EHR](https://sites.google.com/view/ehr-au)
 
 <br>
 
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=gurge44&show=reviews,discussions_started,discussions_answered,prs_merged,prs_merged_percentage&show_icons=true&theme=transparent&rank_icon=github)
-
 <br>
 
-## Credit to these mods and their developers for the code and help:
+## 模组想法来源/职业参考/其他贡献:
 
 ### :star: [TOHER/TOHRE/TOHEN](https://github.com/0xDrMoe/TownofHost-Enhanced) :
 
 >
-> - Our repo is forked from TOHRE (from a long time ago)
-> - Thanks: Better Anti-Blackout
-> - Thanks: Phantom-basis fix for desynced roles
+> - 我们的仓库，梦想就从TOHRE开始 (已经是很久以前的事情了)
+> - 特别感谢：更好的反黑屏机制
+> - 特别感谢：幻象师职业基底的修复
 >
 
 ### :star: [TOHE/TONX](https://github.com/KARPED1EM/TownOfHostEdited) :
 
 >
-> - Our repo is a continuation of TOHE
-> - TONX reference: Modify character limit for chat messages
-> - TONX reference: Modify and apply cool animations on Main Menu
+> - 我们的仓库可以算是一种TOHE的延续
+> - TONX所做的帮助：修改聊天消息的字符限制
+> - TONX所做的帮助：应用了很酷的主菜单页面
 >
 
 ### :star: [TOH](https://github.com/tukasa0001/TownOfHost) :
 
 >
-> - Our repo is based initially on TOH
+> - 我们仓库的最根本是源自TOH的
 >
 
 ### :star: [TOHY](https://github.com/Yumenopai/TownOfHost_Y) :
 
 >
-> - Many role ideas
-> - Provided roles: AntiAdminer, CursedWolf, Workaholic, Greedier, DarkHide, Ignitor, Rabbit
-> - Reference: Modify game announcement
-> - New settings UI for v2024.6.18
-> - Reference: Role Basis Changing Mid-Game
+> - 许多职业想法
+> - 参考：修改游戏公告
+> - v2024.6.18版本之后的职业菜单的改进
+> - 参考：游戏中期角色基础更改
 >
 
 ### :star: [TOH:TOR](https://github.com/music-discussion/TownOfHost-TheOtherRoles) :
 
 >
-> - Many role ideas
-> - Reference: Exile Confirm
-> - Reference: Split RPC Pack
+> - 很多职业想法
+> - 参考：特殊的驱逐确认页面
+> - 参考：拆分 RPC 包，让安卓也能畅玩
 >
 
 ### :star: [SNR](https://github.com/ykundesu/SuperNewRoles) :
 
 >
-> - Reference: Credentials menu
-> - Reference: Switch Horse Mode
-> - Reference: Search Mod Game
-> - Reference: Custom Button
+> - 参考：愚人节模式切换
+> - 参考：搜索功能
+> - 参考：自定义按钮
+> -...
 >
 
 ### :star: [TOP](https://github.com/tugaru1975/TownOfPlus) :
 
 >
-> - Reference: Zoom
+> - 参考：千里眼
 >
 
 ### :star: [RHR](https://github.com/sansaaaaai/Revolutionary-host-roles) :
 
 >
-> - Reference: Modify settings menu
+> - 参考：修改设置菜单
 >
 
 ### :star: [TOH+](https://github.com/SkullCreeper/TownOfHostPlus) :
 
 >
-> - Provided roles: Marshall, Poisoner, Necroview, Sidekick
+> - 提供了N多个职业
 >
 
 ### :star: [PL](https://github.com/Lotus-AU/LotusContinued) :
 
 >
-> - Ideas for some roles
-> - Reference: Customize Main Menu
-> - Reference: Auto Play Again
-> - Reference: Some TabIcons
+> - 一些职业想法
+> - 参考：主菜单
+> - 参考：回放系统
+> - 参考：一些选项卡图标
 >
 
 ### :star: [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) :
 
 >
-> - Many role ideas (this mod is seriously amazing)
-> - Reference: Some custom button images
+> - 很多很多职业想法 (这个mod太有趣了)
+> - 参考：一些按钮的图片
 >
 
 ### :star: [TOHEX/TONEX](https://github.com/TOHEX-Official/TownOfHostEdited-Xi) :
 
 >
-> - Provided the role: Swapper
-> - Reference: Store message history
+> - 提供职业：换票师
+> - 参考：存储历史消息
 >
 
 ### :star: [More Gamemodes](https://github.com/Rabek009/MoreGamemodes) :
 
 >
-> - Reference: Part of the code used for the Endless Host Roles Image in the Main Menu
-> - Reference: Custom Net Objects
-> - Reference: Block vent interaction for players who cannot use vents
+> - 参考：用于主菜单中 Endless Host Roles 图片的部分代码
+> - 参考：禁用不可使用管道的玩家与管道的交互
 >
 
 ### :star: [Reactor](https://github.com/NuclearPowered/Reactor) :
 
 >
-> - Reference: Disable the 5s timeout on custom servers
+> - 参考：在自定义服务器上禁用 5 秒超时
 >
 
 ### :star: [TOHO](https://github.com/Limeau/TownofHost-Optimized) :
 
 >
-> - Reference: Some role ideas (Tank, Deadlined, Journalist, Grappler, Negotiator, Hypnotist, etc.)
+> - 参考：部分职业想法
 >
 
 ### :star: [Mini.RegionInstall](https://github.com/miniduikboot/Mini.RegionInstall) :
 
 >
-> - Reference: Custom Region Installer (adding modded regions)
+> - 参考：自定义服务器安装程序（添加修改后的服务器）
 >
 
-### Endless Host Roles (EHR), with Endless Possibilities, brought to you by the Endless Network.
+### Endless Host Roles (EHR)，的贡献者们都在这里！
 
-##### Developers:
+##### 开发者:
 
 - Gurge44
 
-##### Contributors:
+##### 贡献者:
 
 - Dx
 - PH_Gaming
 - TommyXL
 - Drakos
 
-##### Special Thanks:
+##### 特别鸣谢:
 
 - Seleneous
 - thewhiskas27
 - HyperAtill
 
-##### Translators:
+##### 翻译人员:
 
 - Dx (PT-BR)
 - PH_Gaming (PT-BR)
@@ -368,12 +235,12 @@ You can also report bugs and suggest features in the #bug-reports and #suggestio
 - HyperAtill (RU)
 - ABoringCat (ZH-CN)
 
-# License for the Custom Team Assigner application (everything inside the `CTA` folder)
+# EHR控制面板应用程序的许可证 (所有 `CTA` 文件夹里的内容)
 
 ```
 Copyright (c) 2024, Gurge44
 
-All rights reserved.
+保留所有权利.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
