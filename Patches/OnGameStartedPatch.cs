@@ -203,7 +203,6 @@ internal class ChangeRoleSettings
             Revolutionist.RevolutionistLastTime = [];
             Revolutionist.RevolutionistCountdown = [];
             TimeMaster.TimeMasterBackTrack = [];
-            TimeMaster.TimeMasterNum = [];
             Farseer.FarseerTimer = [];
             Warlock.CursedPlayers = [];
             Mafia.MafiaRevenged = [];
@@ -985,7 +984,7 @@ internal static class StartGameHostPatch
                 playerInfo.IsDead = data;
             }
 
-            var stream = MessageWriter.Get();
+            var stream = MessageWriter.Get(SendOption.Reliable);
             stream.StartMessage(5);
             stream.Write(AmongUsClient.Instance.GameId);
             {

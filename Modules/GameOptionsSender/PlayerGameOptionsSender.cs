@@ -394,7 +394,7 @@ public sealed class PlayerGameOptionsSender(PlayerControl player) : GameOptionsS
                 }
             }
 
-            if (Magician.BlindPPL.ContainsKey(player.PlayerId))
+            if (Magician.BlindPpl.ContainsKey(player.PlayerId))
             {
                 SetBlind();
             }

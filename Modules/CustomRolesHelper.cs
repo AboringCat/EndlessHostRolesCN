@@ -332,7 +332,7 @@ internal static class CustomRolesHelper
             CustomRoles.Taskinator => CustomRoles.Crewmate,
             
             // Room Rush
-            CustomRoles.RRPlayer => CustomRoles.Engineer,
+            CustomRoles.RRPlayer => CustomRoles.Crewmate,
 
             _ => role.IsImpostor() ? CustomRoles.Impostor : CustomRoles.Crewmate
         };
@@ -378,8 +378,6 @@ internal static class CustomRolesHelper
             CustomRoles.CTFPlayer => RoleTypes.Shapeshifter,
             // Natural Disasters
             CustomRoles.NDPlayer => RoleTypes.Crewmate,
-            // Room Rush
-            CustomRoles.RRPlayer => RoleTypes.Engineer,
             // Standard
             CustomRoles.Executioner => Executioner.CRoleChangeRoles[Executioner.ChangeRolesAfterTargetKilled.GetValue()].GetDYRole(),
             CustomRoles.Sheriff => UsePets && Sheriff.UsePet.GetBool() ? RoleTypes.GuardianAngel : RoleTypes.Impostor,
@@ -458,7 +456,7 @@ internal static class CustomRolesHelper
             CustomRoles.Werewolf => RoleTypes.Impostor,
             CustomRoles.Bandit => RoleTypes.Impostor,
             CustomRoles.Maverick => RoleTypes.Impostor,
-            CustomRoles.Parasite => RoleTypes.Impostor,
+            CustomRoles.Parasite => RoleTypes.Shapeshifter,
             CustomRoles.Totocalcio => RoleTypes.Impostor,
             CustomRoles.Romantic => RoleTypes.Impostor,
             CustomRoles.VengefulRomantic => RoleTypes.Impostor,

@@ -1094,8 +1094,8 @@ static class ReportDeadBodyPatch
         Grenadier.GrenadierBlinding.Clear();
         SecurityGuard.BlockSabo.Clear();
         Grenadier.MadGrenadierBlinding.Clear();
-        Divinator.didVote.Clear();
-        Oracle.didVote.Clear();
+        Divinator.DidVote.Clear();
+        Oracle.DidVote.Clear();
         Vulture.Clear();
 
         foreach (var state in Main.PlayerStates.Values)
@@ -1165,11 +1165,15 @@ static class FixedUpdatePatch
     private static readonly Dictionary<byte, int> DeadBufferTime = [];
     private static readonly Dictionary<byte, long> LastUpdate = [];
     private static long LastAddAbilityTime;
+    private static long LastErrorTS;
     private static bool ChatOpen;
 
     public static void Postfix(PlayerControl __instance)
     {
         if (__instance == null || __instance.PlayerId == 255) return;
+        
+        if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+            CustomNetObject.FixedUpdate();
 
         byte id = __instance.PlayerId;
         if (AmongUsClient.Instance.AmHost && GameStates.IsInTask && ReportDeadBodyPatch.CanReport[id] && ReportDeadBodyPatch.WaitReport[id].Count > 0)
@@ -1249,6 +1253,13 @@ static class FixedUpdatePatch
         }
         catch (Exception ex)
         {
+            var now = TimeStamp;
+            if (LastErrorTS != now)
+            {
+                Logger.Error($"Error for {__instance.GetNameWithRole()}:", "FixedUpdatePatch");
+                ThrowException(ex);
+                LastErrorTS = now;
+            }
             Logger.Error($"Error for {__instance.GetNameWithRole()}: {ex}", "FixedUpdatePatch");
         }
     }
@@ -1335,8 +1346,6 @@ static class FixedUpdatePatch
 
                 if (localPlayer)
                 {
-                    CustomNetObject.FixedUpdate();
-
                     if (QuizMaster.On && inTask && !lowLoad && QuizMaster.AllSabotages.Any(IsActive))
                         QuizMaster.Data.LastSabotage = QuizMaster.AllSabotages.FirstOrDefault(IsActive);
                 }
@@ -1358,7 +1367,7 @@ static class FixedUpdatePatch
                     if (!PlagueBearer.PestilenceList.Contains(playerId))
                         PlagueBearer.PestilenceList.Add(playerId);
                     player.ResetKillCooldown();
-                    PlagueBearer.playerIdList.Remove(playerId);
+                    PlagueBearer.PlayerIdList.Remove(playerId);
                 }
 
                 bool checkPos = inTask && player != null && alive && !Pelican.IsEaten(playerId);
@@ -1394,7 +1403,7 @@ static class FixedUpdatePatch
                 {
                     if (Main.AbilityCD.TryGetValue(playerId, out var timer))
                     {
-                        if (timer.StartTimeStamp + timer.TotalCooldown < TimeStamp || !alive)
+                        if (timer.StartTimeStamp + timer.TotalCooldown < now || !alive)
                         {
                             player.RemoveAbilityCD();
                         }
@@ -1472,6 +1481,13 @@ static class FixedUpdatePatch
 
             if (GameStates.IsInGame)
             {
+                if (!AmongUsClient.Instance.AmHost && Options.CurrentGameMode != CustomGameMode.Standard)
+                {
+                    RoleText.text = string.Empty;
+                    RoleText.enabled = false;
+                    return;
+                }
+                
                 bool shouldSeeTargetAddons = playerId == lpId || new[] { PlayerControl.LocalPlayer, player }.All(x => x.Is(Team.Impostor));
 
                 var RoleTextData = GetRoleText(lpId, playerId, seeTargetBetrayalAddons: shouldSeeTargetAddons);
@@ -1735,7 +1751,7 @@ static class FixedUpdatePatch
                     Suffix.Append(GetString("DiedR1Warning"));
 
                 // Devourer
-                if (Devourer.HideNameOfConsumedPlayer.GetBool() && Devourer.playerIdList.Any(x => Main.PlayerStates[x].Role is Devourer { IsEnable: true } dv && dv.PlayerSkinsCosumed.Contains(seer.PlayerId)))
+                if (Devourer.HideNameOfConsumedPlayer.GetBool() && Devourer.PlayerIdList.Any(x => Main.PlayerStates[x].Role is Devourer { IsEnable: true } dv && dv.PlayerSkinsCosumed.Contains(seer.PlayerId)))
                     RealName = GetString("DevouredName");
 
                 // Camouflage

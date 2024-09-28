@@ -229,7 +229,9 @@ static class ExtendedPlayerControl
             return CountTypes.None;
         }
 
-        return Main.PlayerStates.TryGetValue(player.PlayerId, out var State) ? State.SubRoles.Contains(CustomRoles.Bloodlust) ? CountTypes.Bloodlust : State.countTypes : CountTypes.None;
+        if (!Main.PlayerStates.TryGetValue(player.PlayerId, out var state)) return CountTypes.None;
+        if (!player.IsConverted() && state.SubRoles.Contains(CustomRoles.Bloodlust)) return CountTypes.Bloodlust;
+        return state.countTypes;
     }
 
     public static void RpcSetNameEx(this PlayerControl player, string name)
@@ -776,8 +778,8 @@ static class ExtendedPlayerControl
 
     public static void Suicide(this PlayerControl pc, PlayerState.DeathReason deathReason = PlayerState.DeathReason.Suicide, PlayerControl realKiller = null)
     {
-        if (!pc.IsAlive()) return;
-        
+        if (!pc.IsAlive() || !GameStates.IsInTask || ExileController.Instance) return;
+
         var state = Main.PlayerStates[pc.PlayerId];
         if (realKiller != null && state.Role is SchrodingersCat cat)
         {
@@ -1130,7 +1132,7 @@ static class ExtendedPlayerControl
             // Natural Disasters
             CustomRoles.NDPlayer => false,
             // Room Rush
-            CustomRoles.RRPlayer => false,
+            CustomRoles.RRPlayer => RoomRush.VentLimit[pc.PlayerId] > 0,
 
             _ => Main.PlayerStates.TryGetValue(pc.PlayerId, out var state) && state.Role.CanUseImpostorVentButton(pc)
         };
