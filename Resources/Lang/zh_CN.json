@@ -4135,7 +4135,7 @@
   "RR_VentTimes": "玩家跳管的时间限制",
   "RR_Tutorial_1": "<#ffab1b><size=80%>教程</size></color>：\\n你好！新玩家！欢迎来到抢椅子模式！\\n",
   "RR_Tutorial_2": "你所要做的就是尽快到达你名字底下指定的房间，抢到椅子！",
-  "RR_Tutorial_3": "当前两名抢到椅子，时间会缩短（默认到5秒）",
+  "RR_Tutorial_3": "When the first two players enter the correct room, the time limit is set to a few seconds.",
   "RR_Tutorial_4": "If you are last to or don't get to the room in time, you die.\\nGood luck!",
   "RR_VentsRemaining": "<size=80%>剩余管道使用数量：{0}</size>",
   "RR_YouWereLast": "<#ff1919>你是最后一个到达房间的！Oh-O！</color>",
@@ -5027,5 +5027,6 @@
   "RoleSelected": "<b>The role of {0} in the next game will be{1}</b>",
   "UpReplacedMessage": "/up was replaced by /setrole which allows you to set anyone's role for any game by typing '/setrole (ID) (ROLE)'. You can view ID's with /id.\nTo set your own role like with /up, you need to do '/setrole 0 (ROLE)'.",
   "PingText": "Ping",
-  "SettingsForRoleText": "Settings for"
+  "SettingsForRoleText": "Settings for",
+  "NotAssigned": "-"
 }
