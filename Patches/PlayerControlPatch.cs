@@ -1170,7 +1170,7 @@ static class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         if (__instance == null || __instance.PlayerId == 255) return;
-
+        
         if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId)
             CustomNetObject.FixedUpdate();
 
@@ -1472,7 +1472,7 @@ static class FixedUpdatePatch
                     RoleText.enabled = false;
                     return;
                 }
-
+                
                 bool shouldSeeTargetAddons = playerId == lpId || new[] { PlayerControl.LocalPlayer, player }.All(x => x.Is(Team.Impostor));
 
                 var RoleTextData = GetRoleText(lpId, playerId, seeTargetBetrayalAddons: shouldSeeTargetAddons);
@@ -2100,12 +2100,6 @@ static class PlayerControlCompleteTaskPatch
             foreach (var impostor in Main.AllAlivePlayerControls.Where(pc => pc.Is(CustomRoleTypes.Impostor)).ToArray())
                 NameColorManager.Add(impostor.PlayerId, __instance.PlayerId, "#ff1919");
             NotifyRoles(SpecifySeer: __instance, ForceLoop: true);
-        }
-
-        if (isTaskFinish && __instance.GetCustomRole() is CustomRoles.Doctor or CustomRoles.Sunnyboy or CustomRoles.SpeedBooster)
-        {
-            // Execute CustomSyncAllSettings at the end of the task only for matches with sunnyboy, speed booster, or doctor.
-            MarkEveryoneDirtySettings();
         }
     }
 }
