@@ -8,6 +8,7 @@ using EHR.AddOns.Crewmate;
 using EHR.AddOns.GhostRoles;
 using EHR.AddOns.Impostor;
 using EHR.Crewmate;
+using EHR.GameMode.HideAndSeekRoles;
 using EHR.Impostor;
 using EHR.Modules;
 using EHR.Neutral;
@@ -224,7 +225,7 @@ static class CheckMurderPatch
             case CustomGameMode.RoomRush:
             case CustomGameMode.NaturalDisasters:
                 return false;
-            case CustomGameMode.Speedrun when !SpeedrunManager.CanKill.Contains(killer.PlayerId):
+            case CustomGameMode.Speedrun when !SpeedrunManager.OnCheckMurder(killer, target):
                 return false;
             case CustomGameMode.Speedrun:
                 killer.Kill(target);
@@ -2088,7 +2089,8 @@ static class PlayerControlCompleteTaskPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] uint idx)
     {
         if (GameStates.IsMeeting) return;
-        if (__instance != null && __instance.IsAlive()) Benefactor.OnTaskComplete(__instance, __instance.myTasks[(Index)Convert.ToInt32(idx)] as PlayerTask);
+        PlayerTask task = __instance.myTasks[(Index)Convert.ToInt32(idx)] as PlayerTask;
+        if (__instance != null && __instance.IsAlive()) Benefactor.OnTaskComplete(__instance, task);
 
         if (__instance == null) return;
 
@@ -2101,6 +2103,9 @@ static class PlayerControlCompleteTaskPatch
                 NameColorManager.Add(impostor.PlayerId, __instance.PlayerId, "#ff1919");
             NotifyRoles(SpecifySeer: __instance, ForceLoop: true);
         }
+
+        if (Options.CurrentGameMode == CustomGameMode.HideAndSeek && HnSManager.PlayerRoles[__instance.PlayerId].Interface.Team == Team.Crewmate && __instance.IsAlive())
+            Hider.OnSpecificTaskComplete(__instance, task);
     }
 }
 
