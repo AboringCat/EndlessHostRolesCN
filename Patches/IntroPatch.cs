@@ -200,9 +200,54 @@ static class CoBeginPatch
 
         RPC.RpcVersionCheck();
 
+        SetupLongRoleDescriptions();
+
         Utils.NotifyRoles(NoCache: true);
 
         GameStates.InGame = true;
+    }
+
+    private static void SetupLongRoleDescriptions()
+    {
+        try
+        {
+            Utils.LongRoleDescriptions.Clear();
+
+            foreach (var seer in Main.AllPlayerControls)
+            {
+                var longInfo = seer.GetRoleInfo(InfoLong: true).Split("\n\n")[0];
+                if (longInfo.Contains("):\n")) longInfo = longInfo.Split("):\n")[1];
+                bool tooLong = false;
+                bool showLongInfo = Options.ShowLongInfo.GetBool();
+                if (showLongInfo)
+                {
+                    if (longInfo.Length > 296)
+                    {
+                        longInfo = longInfo[..296];
+                        longInfo += "...";
+                        tooLong = true;
+                    }
+
+                    for (int i = 50; i < longInfo.Length; i += 50)
+                    {
+                        if (tooLong && i > 296) break;
+                        int index = longInfo.LastIndexOf(' ', i);
+                        if (index != -1) longInfo = longInfo.Insert(index + 1, "\n");
+                    }
+                }
+
+                longInfo = $"<#ffffff>{longInfo}</color>";
+
+                var lines = longInfo.Count(x => x == '\n');
+                var readTime = 30 + (lines * 5);
+
+                Utils.LongRoleDescriptions[seer.PlayerId] = (longInfo, readTime, tooLong);
+            }
+        }
+        catch (Exception e)
+        {
+            Utils.ThrowException(e);
+        }
     }
 }
 
@@ -737,12 +782,14 @@ static class IntroCutsceneDestroyPatch
         // Set roleAssigned as false for overriding roles for modded players
         // for vanilla clients we use "Data.Disconnected"
         Main.AllPlayerControls.Do(x => x.roleAssigned = false);
+        
+        var aapc = Main.AllAlivePlayerControls;
 
         if (AmongUsClient.Instance.AmHost)
         {
             if (Main.NormalOptions.MapId != 4)
             {
-                foreach (var pc in Main.AllAlivePlayerControls)
+                foreach (var pc in aapc)
                 {
                     pc.SyncSettings();
                     pc.RpcResetAbilityCooldown();
@@ -794,11 +841,11 @@ static class IntroCutsceneDestroyPatch
 
                 LateTask.New(() =>
                 {
-                    foreach (var pc in Main.AllAlivePlayerControls)
+                    foreach (var pc in aapc)
                     {
                         if (pc.Is(CustomRoles.GM)) continue;
                         string petId = pet == "pet_RANDOM_FOR_EVERYONE" ? pets[r.Next(0, pets.Length - 1)] : pet;
-                        PetsPatch.SetPet(pc, petId);
+                        pc.RpcSetPetDesync(petId, pc);
                         Logger.Info($"{pc.GetNameWithRole()} => {GetString(petId)} Pet", "PetAssign");
                     }
 
@@ -811,7 +858,7 @@ static class IntroCutsceneDestroyPatch
                         try
                         {
                             lp.Notify(GetString("GLHF"), 2f);
-                            foreach (PlayerControl pc in Main.AllAlivePlayerControls)
+                            foreach (PlayerControl pc in aapc)
                             {
                                 if (pc.IsHost()) continue; // Skip the host
                                 try
@@ -840,7 +887,7 @@ static class IntroCutsceneDestroyPatch
 
             if (Options.UseUnshiftTrigger.GetBool() || Main.PlayerStates.Values.Any(x => x.MainRole.AlwaysUsesUnshift()))
             {
-                LateTask.New(() => Main.AllAlivePlayerControls.Do(x => x.CheckAndSetUnshiftState()), 2f, "UnshiftTrigger SS");
+                LateTask.New(() => aapc.Do(x => x.CheckAndSetUnshiftState()), 2f, "UnshiftTrigger SS");
             }
 
             if (Main.GM.Value)
@@ -861,7 +908,7 @@ static class IntroCutsceneDestroyPatch
                     5 => new RandomSpawn.FungleSpawnMap(),
                     _ => null
                 };
-                if (map != null && AmongUsClient.Instance.AmHost) Main.AllAlivePlayerControls.Do(map.RandomTeleport);
+                if (map != null && AmongUsClient.Instance.AmHost) aapc.Do(map.RandomTeleport);
             }
 
             if (lp.HasDesyncRole())
@@ -882,12 +929,32 @@ static class IntroCutsceneDestroyPatch
 
             if (AFKDetector.ActivateOnStart.GetBool())
             {
-                LateTask.New(() => Main.AllAlivePlayerControls.Do(AFKDetector.RecordPosition), 1f, log: false);
+                LateTask.New(() => aapc.Do(AFKDetector.RecordPosition), 1f, log: false);
             }
 
-            LateTask.New(() => Utils.NotifyRoles(NoCache: true), 3f, log: false);
+            LateTask.New(() => Main.Instance.StartCoroutine(NotifyEveryone()), 3f, log: false);
+        }
+        else
+        {
+            foreach (var player in Main.AllPlayerControls)
+            {
+                Main.PlayerStates[player.PlayerId].InitTask(player);
+            }
         }
 
         Logger.Info("OnDestroy", "IntroCutscene");
+
+        System.Collections.IEnumerator NotifyEveryone()
+        {
+            int count = 0;
+            foreach (var seer in aapc)
+            {
+                foreach (var target in aapc)
+                {
+                    Utils.NotifyRoles(SpecifySeer: seer, SpecifyTarget: target);
+                    if (count++ % 2 == 0) yield return null;
+                }
+            }
+        }
     }
 }

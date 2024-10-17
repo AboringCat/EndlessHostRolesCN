@@ -29,10 +29,10 @@
 
 # 安装方法
 
-任何一种方式都很容易:
+很容易:
+  
+- 跟随EHR网站的英文教程走: [EHR](https://sites.google.com/view/ehr-au)  
 
-- 通过 [Mod Manager](https://goodloss.fr/mm) 自动安装。  
-- 或者跟随EHR网站的英文教程走: [EHR](https://sites.google.com/view/ehr-au)  
 
 <br>
 

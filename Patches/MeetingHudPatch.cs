@@ -12,6 +12,7 @@ using HarmonyLib;
 using TMPro;
 using UnityEngine;
 using static EHR.Translator;
+// ReSharper disable AccessToModifiedClosure
 
 
 namespace EHR.Patches;
@@ -29,7 +30,6 @@ static class CheckForEndVotingPatch
         //Meeting Skip with vote counting on keystroke (m + delete)
         bool shouldSkip = Input.GetKeyDown(KeyCode.F6);
 
-        //
         var voteLog = Logger.Handler("Vote");
         try
         {
@@ -78,13 +78,14 @@ static class CheckForEndVotingPatch
                     return true;
                 }
 
-                if (pva.DidVote && pva.VotedFor < 253 && pc.Data?.IsDead == false)
+                if (pva.DidVote && pva.VotedFor < 253 && pc.IsAlive())
                 {
                     var voteTarget = Utils.GetPlayerById(pva.VotedFor);
                     if (voteTarget == null || !voteTarget.IsAlive() || voteTarget.Data == null || voteTarget.Data.Disconnected)
                     {
-                        __instance.UpdateButtons();
+                        pva.UnsetVote();
                         __instance.RpcClearVote(pc.GetClientId());
+                        __instance.UpdateButtons();
                     }
                     else if (voteTarget != null && !pc.GetCustomRole().CancelsVote())
                         Main.PlayerStates[pc.PlayerId].Role.OnVote(pc, voteTarget);
@@ -192,7 +193,12 @@ static class CheckForEndVotingPatch
                 }
             }
 
-            if (!RunRoleCode) return false;
+            if ((Blackmailer.On || NiceSwapper.On) && !RunRoleCode)
+            {
+                Logger.Warn($"Running role code is disabled, skipping the rest of the process (Blackmailer.On: {Blackmailer.On}, NiceSwapper.On: {NiceSwapper.On}, RunRoleCode: {RunRoleCode})", "Vote");
+                if (shouldSkip) LateTask.New(() => RunRoleCode = true, 0.5f, "Enable RunRoleCode");
+                return false;
+            }
 
             Blackmailer.OnCheckForEndVoting();
             NiceSwapper.OnCheckForEndVoting();
@@ -319,7 +325,7 @@ static class CheckForEndVotingPatch
 
         var player = Utils.GetPlayerById(exiledPlayer.PlayerId);
         var crole = exiledPlayer.GetCustomRole();
-        var coloredRole = Utils.GetDisplayRoleName(exileId, true);
+        var coloredRole = Utils.GetDisplayRoleName(exileId, true, true);
 
         if (crole == CustomRoles.LovingImpostor && !Options.ConfirmLoversOnEject.GetBool())
         {
@@ -599,6 +605,8 @@ static class MeetingHudStartPatch
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
+        CheckForEndVotingPatch.RunRoleCode = true;
+
         List<(string Message, byte TargetID, string Title)> msgToSend = [];
 
         if (Options.SendRoleDescriptionFirstMeeting.GetBool() && MeetingStates.FirstMeeting)
@@ -726,7 +734,7 @@ static class MeetingHudStartPatch
 
         if (msgToSend.Count > 0)
         {
-            LateTask.New(() => { msgToSend.Do(x => Utils.SendMessage(x.Message, x.TargetID, x.Title)); }, 6f, "Meeting Start Notify");
+            LateTask.New(() => msgToSend.Do(x => Utils.SendMessage(x.Message, x.TargetID, x.Title)), 6f, "Meeting Start Notify");
         }
 
         Main.CyberStarDead.Clear();
@@ -820,13 +828,20 @@ static class MeetingHudStartPatch
             }
 
             var suffix = Main.PlayerStates[seer.PlayerId].Role.GetSuffix(seer, target, meeting: true);
-            if (roleTextMeeting.text.Length > 0 && suffix.Length > 0) roleTextMeeting.text += "\n" + suffix;
+            if (suffix.Length > 0)
+            {
+                if (roleTextMeeting.enabled) roleTextMeeting.text += "\n";
+                else roleTextMeeting.text = string.Empty;
+
+                roleTextMeeting.text += suffix;
+                roleTextMeeting.enabled = true;
+            }
 
             // Thanks BAU (By D1GQ) - are you happy now?
             var playerLevel = pva.transform.Find("PlayerLevel");
             var levelDisplay = Object.Instantiate(playerLevel, pva.transform);
             levelDisplay.localPosition = new(-1.21f, -0.15f, playerLevel.transform.localPosition.z);
-            levelDisplay.transform.SetSiblingIndex(pva.transform.Find("PlayerLevel").GetSiblingIndex() + 1);
+            levelDisplay.transform.SetSiblingIndex(playerLevel.GetSiblingIndex() + 1);
             levelDisplay.gameObject.name = "PlayerId";
             levelDisplay.GetComponent<SpriteRenderer>().color = Palette.Purple;
             var idLabel = levelDisplay.transform.Find("LevelLabel");
@@ -1125,17 +1140,17 @@ static class MeetingHudCastVotePatch
             isSkip = true;
         }
 
-        bool isVoteCanceled = false;
+        bool voteCanceled = false;
 
         if (!Main.DontCancelVoteList.Contains(srcPlayerId) && !isSkip && pc_src.GetCustomRole().CancelsVote() && Main.PlayerStates[srcPlayerId].Role.OnVote(pc_src, pc_target))
         {
             ShouldCancelVoteList.TryAdd(srcPlayerId, (__instance, pva_src, pc_src));
-            isVoteCanceled = true;
+            voteCanceled = true;
         }
 
-        Logger.Info($"{pc_src.GetNameWithRole().RemoveHtmlTags()} => {(isSkip ? "Skip" : pc_target.GetNameWithRole().RemoveHtmlTags())}{(isVoteCanceled ? " (Canceled)" : string.Empty)}", "Vote");
+        Logger.Info($"{pc_src.GetNameWithRole().RemoveHtmlTags()} => {(isSkip ? "Skip" : pc_target.GetNameWithRole().RemoveHtmlTags())}{(voteCanceled ? " (Canceled)" : string.Empty)}", "Vote");
 
-        return isSkip || !isVoteCanceled; // return false to use the vote as a trigger; skips and invalid votes are never canceled
+        return isSkip || !voteCanceled; // return false to use the vote as a trigger; skips and invalid votes are never canceled
     }
 
     public static void Postfix([HarmonyArgument(0)] byte srcPlayerId)

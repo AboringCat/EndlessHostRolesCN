@@ -40,7 +40,7 @@ namespace EHR
         {
             FixedUpdatePatch.Return = true;
 
-            HotPotatoState = (byte.MaxValue, byte.MaxValue, Time.GetInt() + 40, 1);
+            HotPotatoState = (byte.MaxValue, byte.MaxValue, Time.GetInt() + 50, 1);
             SurvivalTimes = [];
             foreach (var pc in Main.AllPlayerControls) SurvivalTimes[pc.PlayerId] = 0;
 
@@ -50,7 +50,7 @@ namespace EHR
         public static void OnGameStart()
         {
             LateTask.New(() => { FixedUpdatePatch.Return = false; }, 7f, log: false);
-            HotPotatoState = (byte.MaxValue, byte.MaxValue, Time.GetInt() + 20, 1);
+            HotPotatoState = (byte.MaxValue, byte.MaxValue, Time.GetInt() + 30, 1);
         }
 
         public static int GetSurvivalTime(byte id) => SurvivalTimes.GetValueOrDefault(id, 1);
@@ -95,7 +95,7 @@ namespace EHR
                 PlayerControl[] aapc = Main.AllAlivePlayerControls;
                 if (HotPotatoState.HolderID != __instance.PlayerId || !aapc.Any(x => x.PlayerId != HotPotatoState.HolderID && (x.PlayerId != HotPotatoState.LastHolderID || aapc.Length == 2) && Vector2.Distance(x.Pos(), Holder.Pos()) <= Range.GetFloat())) return;
 
-                float wait = aapc.Length <= 2 ? 0.4f : 0.1f;
+                float wait = aapc.Length <= 2 ? 0.4f : 0.05f;
                 UpdateDelay += UnityEngine.Time.fixedDeltaTime;
                 if (UpdateDelay < wait) return;
                 UpdateDelay = 0;

@@ -80,6 +80,7 @@ namespace EHR
 
         public static void StartSeekerBlindTime()
         {
+            Main.AllPlayerKillCooldown.SetAllValues(Seeker.KillCooldown.GetFloat());
             IsBlindTime = true;
             Utils.MarkEveryoneDirtySettingsV4();
             LateTask.New(() =>
@@ -238,10 +239,10 @@ namespace EHR
         public static void ApplyGameOptions(IGameOptions opt, PlayerControl pc)
         {
             var role = PlayerRoles.GetValueOrDefault(pc.PlayerId);
-            bool isBlind = role.Interface.Team == Team.Impostor && IsBlindTime;
-            Main.AllPlayerSpeed[pc.PlayerId] = isBlind ? Main.MinSpeed : role.Interface.RoleSpeed;
-            opt.SetFloat(FloatOptionNames.CrewLightMod, isBlind ? 0f : role.Interface.RoleVision);
-            opt.SetFloat(FloatOptionNames.ImpostorLightMod, isBlind ? 0f : role.Interface.RoleVision);
+            bool blind = role.Interface.Team == Team.Impostor && IsBlindTime;
+            Main.AllPlayerSpeed[pc.PlayerId] = blind ? Main.MinSpeed : role.Interface.RoleSpeed;
+            opt.SetFloat(FloatOptionNames.CrewLightMod, blind ? 0f : role.Interface.RoleVision);
+            opt.SetFloat(FloatOptionNames.ImpostorLightMod, blind ? 0f : role.Interface.RoleVision);
             opt.SetFloat(FloatOptionNames.PlayerSpeedMod, Main.AllPlayerSpeed[pc.PlayerId]);
         }
 
@@ -270,6 +271,7 @@ namespace EHR
 
         public static bool HasTasks(NetworkedPlayerInfo playerInfo)
         {
+            if (!AmongUsClient.Instance.AmHost && playerInfo.PlayerId == PlayerControl.LocalPlayer.PlayerId) return PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.Taskinator or CustomRoles.Hider or CustomRoles.Jet or CustomRoles.Detector or CustomRoles.Jumper;
             if (!PlayerRoles.TryGetValue(playerInfo.PlayerId, out var role)) return false;
             return role.Interface.Team == Team.Crewmate || role.Role == CustomRoles.Taskinator;
         }
@@ -282,10 +284,10 @@ namespace EHR
             return targetRole.Interface.Team == Team.Impostor && (targetRole.Role != CustomRoles.Agent || seerRole.Interface.Team == Team.Impostor);
         }
 
-        public static string GetSuffixText(PlayerControl seer, PlayerControl target, bool isHUD = false)
+        public static string GetSuffixText(PlayerControl seer, PlayerControl target, bool hud = false)
         {
             if (GameStates.IsLobby || Options.CurrentGameMode != CustomGameMode.HideAndSeek || Main.HasJustStarted) return string.Empty;
-            if (seer.PlayerId != target.PlayerId) return string.Empty;
+            if (seer.PlayerId != target.PlayerId || (seer.IsHost() && !hud)) return string.Empty;
 
             string dangerMeter = GetDangerMeter(seer);
 
@@ -295,7 +297,6 @@ namespace EHR
                 dangerMeter += TargetArrow.GetArrows(seer, agent);
             }
 
-            if (!isHUD && seer.IsModClient()) return string.Empty;
             if (TimeLeft <= 60)
             {
                 return $"{dangerMeter}\n<color={Main.RoleColors[CustomRoles.Hider]}>{Translator.GetString("TimeLeft")}:</color> {TimeLeft}s";
@@ -304,7 +305,7 @@ namespace EHR
             var remainingMinutes = TimeLeft / 60;
             var remainingSeconds = $"{(TimeLeft % 60) + 1}";
             if (remainingSeconds.Length == 1) remainingSeconds = $"0{remainingSeconds}";
-            return dangerMeter + "\n" + (isHUD ? $"{remainingMinutes}:{remainingSeconds}" : $"{string.Format(Translator.GetString("MinutesLeft"), $"{remainingMinutes}-{remainingMinutes + 1}")}");
+            return dangerMeter + "\n" + (hud ? $"{remainingMinutes}:{remainingSeconds}" : $"{string.Format(Translator.GetString("MinutesLeft"), $"{remainingMinutes}-{remainingMinutes + 1}")}");
         }
 
         private static string GetDangerMeter(PlayerControl seer)
