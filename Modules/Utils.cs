@@ -745,6 +745,7 @@ public static class Utils
             case CustomRoles.Eclipse:
             case CustomRoles.Pyromaniac:
             case CustomRoles.NSerialKiller:
+            case CustomRoles.Vortex:
             case CustomRoles.Beehive:
             case CustomRoles.RouleteGrandeur:
             case CustomRoles.Nonplus:
@@ -966,7 +967,7 @@ public static class Utils
                CustomTeamManager.AreInSameCustomTeam(__instance.PlayerId, PlayerControl.LocalPlayer.PlayerId) && CustomTeamManager.IsSettingEnabledForPlayerTeam(__instance.PlayerId, CTAOption.KnowRoles) ||
                Main.PlayerStates.Values.Any(x => x.Role.KnowRole(PlayerControl.LocalPlayer, __instance)) ||
                PlayerControl.LocalPlayer.IsRevealedPlayer(__instance) ||
-               PlayerControl.LocalPlayer.Is(CustomRoles.God) ||
+               PlayerControl.LocalPlayer.Is(CustomRoles.God) && God.KnowInfo.GetValue() == 2 ||
                PlayerControl.LocalPlayer.Is(CustomRoles.GM) ||
                Markseeker.PlayerIdList.Any(x => Main.PlayerStates[x].Role is Markseeker { IsEnable: true, TargetRevealed: true } ms && ms.MarkedId == __instance.PlayerId) ||
                Main.GodMode.Value;
@@ -2020,6 +2021,7 @@ public static class Utils
                     else
                     {
                         SelfMark.Append(Witch.GetSpelledMark(seer.PlayerId, isForMeeting));
+                        if (isForMeeting) SelfMark.Append(Wasp.GetStungMark(seer.PlayerId));
                     }
 
                     GameMode:
@@ -2083,23 +2085,21 @@ public static class Utils
                         }
                         else if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
                         {
-                            SeerRealName = HnSManager.GetRoleInfoText(seer);
+                            if (GameStartTimeStamp + 40 > now) SeerRealName = HnSManager.GetRoleInfoText(seer);
                         }
-                        else
+                        else if (Options.ChangeNameToRoleInfo.GetBool())
                         {
                             var showLongInfo = LongRoleDescriptions.TryGetValue(seer.PlayerId, out var description) && GameStartTimeStamp + description.Duration > now;
                             var mHelp = (!showLongInfo || description.Long) && Options.CurrentGameMode == CustomGameMode.Standard ? "\n" + GetString("MyRoleCommandHelp") : string.Empty;
 
-                            SeerRealName = !Options.ChangeNameToRoleInfo.GetBool()
-                                ? SeerRealName
-                                : seerTeam switch
-                                {
-                                    Team.Impostor when seer.IsMadmate() => $"<size=150%><color=#ff1919>{GetString("YouAreMadmate")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
-                                    Team.Impostor => $"\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
-                                    Team.Crewmate => $"<size=150%><color=#8cffff>{GetString("YouAreCrewmate")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
-                                    Team.Neutral => $"<size=150%><color=#ffab1b>{GetString("YouAreNeutral")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
-                                    _ => SeerRealName
-                                };
+                            SeerRealName = seerTeam switch
+                            {
+                                Team.Impostor when seer.IsMadmate() => $"<size=150%><color=#ff1919>{GetString("YouAreMadmate")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
+                                Team.Impostor => $"\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
+                                Team.Crewmate => $"<size=150%><color=#8cffff>{GetString("YouAreCrewmate")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
+                                Team.Neutral => $"<size=150%><color=#ffab1b>{GetString("YouAreNeutral")}</size></color>\n<size=90%>{(showLongInfo ? description.Text : seer.GetRoleInfo()) + mHelp}</size>",
+                                _ => SeerRealName
+                            };
                         }
                     }
                 }
@@ -2178,6 +2178,7 @@ public static class Utils
                             if (Options.CurrentGameMode != CustomGameMode.Standard || GameStates.IsLobby) goto BeforeEnd2;
 
                             TargetMark.Append(Witch.GetSpelledMark(target.PlayerId, isForMeeting));
+                            if (isForMeeting) TargetMark.Append(Wasp.GetStungMark(target.PlayerId));
 
                             if (target.Is(CustomRoles.SuperStar) && Options.EveryOneKnowSuperStar.GetBool())
                                 TargetMark.Append(ColorString(GetRoleColor(CustomRoles.SuperStar), "★"));
@@ -2282,7 +2283,7 @@ public static class Utils
                                 Options.CurrentGameMode is CustomGameMode.FFA or CustomGameMode.MoveAndStop or CustomGameMode.HotPotato or CustomGameMode.Speedrun ||
                                 (Options.CurrentGameMode == CustomGameMode.HideAndSeek && HnSManager.IsRoleTextEnabled(seer, target)) ||
                                 (seer.IsRevealedPlayer(target) && !target.Is(CustomRoles.Trickster)) ||
-                                seer.Is(CustomRoles.God) ||
+                                (seer.Is(CustomRoles.God) && God.KnowInfo.GetValue() == 2) ||
                                 target.Is(CustomRoles.GM)
                                     ? $"<size={fontSize}>{target.GetDisplayRoleName(seeTargetBetrayalAddons: shouldSeeTargetAddons)}{GetProgressText(target)}</size>\r\n"
                                     : string.Empty;

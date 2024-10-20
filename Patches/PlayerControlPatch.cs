@@ -366,13 +366,13 @@ static class CheckMurderPatch
             return false;
         }
 
-        if (killer.Is(CustomRoles.Madmate) && target.Is(CustomRoleTypes.Impostor) && !Options.MadmateCanKillImp.GetBool())
+        if (killer.IsMadmate() && target.Is(CustomRoleTypes.Impostor) && !Options.MadmateCanKillImp.GetBool())
         {
             Notify("MadmateKillImpostor");
             return false;
         }
 
-        if (killer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoles.Madmate) && !Options.ImpCanKillMadmate.GetBool())
+        if (killer.Is(CustomRoleTypes.Impostor) && target.IsMadmate() && !Options.ImpCanKillMadmate.GetBool())
         {
             Notify("ImpostorKillMadmate");
             return false;
@@ -532,7 +532,7 @@ static class CheckMurderPatch
             killer.RpcGuardAndKill(target);
             target.RpcGuardAndKill(killer);
             target.RpcGuardAndKill(target);
-            Logger.Info("Add-on assigned:" + target?.Data?.PlayerName + " = " + target.GetCustomRole() + " + " + CustomRoles.Madmate, "Assign " + CustomRoles.Madmate);
+            Logger.Info($"Add-on assigned: {target?.Data?.PlayerName} = {target.GetCustomRole()} + {CustomRoles.Madmate}", $"Assign {CustomRoles.Madmate}");
             return false;
         }
 
@@ -760,7 +760,15 @@ static class ShapeshiftPatch
 
         var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
 
-        if (AmongUsClient.Instance.AmHost && shapeshifting && !Rhapsode.CheckAbilityUse(shapeshifter)) return false;
+        if (AmongUsClient.Instance.AmHost && shapeshifting)
+        {
+            if (!Rhapsode.CheckAbilityUse(shapeshifter)) return false;
+            if (shapeshifter.Is(CustomRoles.Trainee) && MeetingStates.FirstMeeting)
+            {
+                shapeshifter.Notify(GetString("TraineeNotify"));
+                return false;
+            }
+        }
 
         Main.CheckShapeshift[shapeshifter.PlayerId] = shapeshifting;
         Main.ShapeshiftTarget[shapeshifter.PlayerId] = target.PlayerId;
@@ -2350,7 +2358,6 @@ static class ShouldProcessRpcPatch
     // Always return true because the check is absolutely pointless
     public static bool Prefix(PlayerControl __instance, RpcCalls rpc, byte sequenceId, ref bool __result)
     {
-        Logger.Info($"{__instance.PlayerId} old skin sequenceId {__instance.Data.DefaultOutfit.SkinSequenceId} - new skin sequenceId {rpc} - sequenceId {sequenceId}", "Test");
         __result = true;
         return false;
     }
