@@ -149,6 +149,9 @@ public class PlayerState(byte playerId)
                 jackal.SidekickId = PlayerId;
 
             LateTask.New(() => Player.CheckAndSetUnshiftState(), 1f, log: false);
+            
+            if (Options.CurrentGameMode == CustomGameMode.Standard && !GameStates.IsMeeting && !AntiBlackout.SkipTasks)
+                Player.Notify(string.Format(Translator.GetString("RoleChangedNotify"), role.ToColoredString()), 10f);
         }
 
         CheckMurderPatch.TimeSinceLastKill.Remove(PlayerId);
