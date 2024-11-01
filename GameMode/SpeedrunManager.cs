@@ -53,8 +53,11 @@ namespace EHR
 
         public static void ResetTimer(PlayerControl pc)
         {
-            if (TimeStacksUp.GetBool()) Timers[pc.PlayerId] += TimeLimit.GetInt();
-            else Timers[pc.PlayerId] = TimeLimit.GetInt();
+            if (TimeStacksUp.GetBool())
+                Timers[pc.PlayerId] += TimeLimit.GetInt();
+            else
+                Timers[pc.PlayerId] = TimeLimit.GetInt();
+
             Logger.Info($" Timer for {pc.GetRealName()} set to {Timers[pc.PlayerId]}", "Speedrun");
         }
 
@@ -93,6 +96,7 @@ namespace EHR
 
             // ReSharper disable once ConvertIfStatementToReturnStatement
             if (CanKill.Contains(pc.PlayerId)) return string.Format(Translator.GetString("Speedrun_CanKillSuffixInfo"), alive, apc, killers - 1, time);
+
             return string.Format(Translator.GetString("Speedrun_DoTasksSuffixInfo"), pc.GetTaskState().RemainingTasksCount, alive, apc, killers, time);
         }
 
@@ -102,7 +106,8 @@ namespace EHR
 
             if (TaskFinishWins.GetBool())
             {
-                var player = aapc.FirstOrDefault(x => x.GetTaskState().IsTaskFinished);
+                PlayerControl player = aapc.FirstOrDefault(x => x.GetTaskState().IsTaskFinished);
+
                 if (player != null)
                 {
                     CustomWinnerHolder.WinnerIds = [player.PlayerId];
@@ -124,18 +129,19 @@ namespace EHR
             }
 
             reason = GameOverReason.ImpostorByKill;
-            var keys = new[] { KeyCode.LeftShift, KeyCode.L, KeyCode.Return };
+            KeyCode[] keys = { KeyCode.LeftShift, KeyCode.L, KeyCode.Return };
             return keys.Any(Input.GetKeyDown) && keys.All(Input.GetKey);
         }
 
         public static bool OnCheckMurder(PlayerControl killer, PlayerControl target)
         {
             if (!CanKill.Contains(killer.PlayerId)) return false;
+
             return CanKill.Contains(target.PlayerId) || KillersCanKillTaskingPlayers.GetBool();
         }
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
-        static class FixedUpdatePatch
+        private static class FixedUpdatePatch
         {
             private static long LastUpdate;
 
@@ -147,6 +153,7 @@ namespace EHR
 
                 long now = Utils.TimeStamp;
                 if (LastUpdate == now) return;
+
                 LastUpdate = now;
 
                 Timers.AdjustAllValues(x => x - 1);
@@ -161,17 +168,11 @@ namespace EHR
     {
         public override bool IsEnable => false;
 
-        public override void Init()
-        {
-        }
+        public override void Init() { }
 
-        public override void Add(byte playerId)
-        {
-        }
+        public override void Add(byte playerId) { }
 
-        public override void SetupCustomOption()
-        {
-        }
+        public override void SetupCustomOption() { }
 
         public override bool CanUseVent(PlayerControl pc, int ventId)
         {

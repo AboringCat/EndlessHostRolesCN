@@ -38,24 +38,33 @@ namespace EHR.Neutral
         public override void SetupCustomOption()
         {
             SetupSingleRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.Virus);
+
             KillCooldown = new FloatOptionItem(Id + 10, "VirusKillCooldown", new(0f, 60f, 0.5f), 30f, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus])
                 .SetValueFormat(OptionFormat.Seconds);
+
             CanVent = new BooleanOptionItem(Id + 11, "VirusCanVent", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             ImpostorVision = new BooleanOptionItem(Id + 16, "ImpostorVision", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             InfectMax = new IntegerOptionItem(Id + 12, "VirusInfectMax", new(1, 15, 1), 2, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus])
                 .SetValueFormat(OptionFormat.Times);
+
             KnowTargetRole = new BooleanOptionItem(Id + 13, "VirusKnowTargetRole", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             TargetKnowOtherTarget = new BooleanOptionItem(Id + 14, "VirusTargetKnowOtherTarget", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             KillInfectedPlayerAfterMeeting = new BooleanOptionItem(Id + 15, "VirusKillInfectedPlayerAfterMeeting", false, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             ContagiousPlayersCanKillEachOther = new BooleanOptionItem(Id + 18, "ContagiousPlayersCanKillEachOther", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
+
             ContagiousCountMode = new StringOptionItem(Id + 17, "ContagiousCountMode", ContagiousCountModeStrings, 0, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Virus]);
         }
@@ -72,8 +81,15 @@ namespace EHR.Neutral
             playerId.SetAbilityUseLimit(InfectMax.GetInt());
         }
 
-        public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = KillCooldown.GetFloat();
-        public override bool CanUseImpostorVentButton(PlayerControl pc) => CanVent.GetBool();
+        public override void SetKillCooldown(byte id)
+        {
+            Main.AllPlayerKillCooldown[id] = KillCooldown.GetFloat();
+        }
+
+        public override bool CanUseImpostorVentButton(PlayerControl pc)
+        {
+            return CanVent.GetBool();
+        }
 
         public override bool CanUseKillButton(PlayerControl pc)
         {
@@ -88,6 +104,7 @@ namespace EHR.Neutral
         public override void OnMurder(PlayerControl killer, PlayerControl target)
         {
             if (killer.GetAbilityUseLimit() < 1) return;
+
             InfectedBodies.Add(target.PlayerId);
         }
 
@@ -128,6 +145,7 @@ namespace EHR.Neutral
                 }
 
                 var infectedIdList = new List<byte>();
+
                 foreach (PlayerControl pc in Main.AllAlivePlayerControls)
                 {
                     bool isInfected = InfectedPlayer.Contains(pc.PlayerId);
@@ -142,9 +160,7 @@ namespace EHR.Neutral
                         }
                     }
                     else
-                    {
                         Main.AfterMeetingDeathPlayers.Remove(pc.PlayerId);
-                    }
                 }
 
                 CheckForEndVotingPatch.TryAddAfterMeetingDeathPlayers(PlayerState.DeathReason.Infected, [.. infectedIdList]);
@@ -159,8 +175,11 @@ namespace EHR.Neutral
         public override bool KnowRole(PlayerControl player, PlayerControl target)
         {
             if (base.KnowRole(player, target)) return true;
+
             if (player.Is(CustomRoles.Contagious) && target.Is(CustomRoles.Virus)) return true;
+
             if (KnowTargetRole.GetBool() && player.Is(CustomRoles.Virus) && target.Is(CustomRoles.Contagious)) return true;
+
             return TargetKnowOtherTarget.GetBool() && player.Is(CustomRoles.Contagious) && target.Is(CustomRoles.Contagious);
         }
 

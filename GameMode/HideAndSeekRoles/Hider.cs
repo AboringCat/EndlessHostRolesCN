@@ -1,16 +1,16 @@
-﻿using System.Linq;
-
-namespace EHR.GameMode.HideAndSeekRoles
+﻿namespace EHR.GameMode.HideAndSeekRoles
 {
     internal class Hider : RoleBase, IHideAndSeekRole
     {
-        public static bool On;
+        private static bool On;
 
-        public static OptionItem Vision;
-        public static OptionItem Speed;
-        public static OptionItem TimeDecreaseOnShortTaskComplete;
-        public static OptionItem TimeDecreaseOnCommonTaskComplete;
-        public static OptionItem TimeDecreaseOnLongTaskComplete;
+        private static OptionItem Vision;
+        private static OptionItem Speed;
+        private static OptionItem TimeDecreaseOnShortTaskComplete;
+        private static OptionItem TimeDecreaseOnCommonTaskComplete;
+        private static OptionItem TimeDecreaseOnLongTaskComplete;
+        private static OptionItem TimeDecreaseOnSituationalTaskComplete;
+        private static OptionItem TimeDecreaseOnOtherTaskComplete;
 
         public override bool IsEnable => On;
         public Team Team => Team.Crewmate;
@@ -30,19 +30,33 @@ namespace EHR.GameMode.HideAndSeekRoles
                 .SetGameMode(CustomGameMode.HideAndSeek)
                 .SetValueFormat(OptionFormat.Multiplier)
                 .SetColor(new(52, 94, 235, byte.MaxValue));
+
             Speed = new FloatOptionItem(69_211_102, "HiderSpeed", new(0.05f, 5f, 0.05f), 1.25f, TabGroup.CrewmateRoles)
                 .SetGameMode(CustomGameMode.HideAndSeek)
                 .SetValueFormat(OptionFormat.Multiplier)
                 .SetColor(new(52, 94, 235, byte.MaxValue));
+
             TimeDecreaseOnShortTaskComplete = new IntegerOptionItem(69_211_103, "TimeDecreaseOnShortTaskComplete", new(0, 60, 1), 5, TabGroup.CrewmateRoles)
                 .SetGameMode(CustomGameMode.HideAndSeek)
                 .SetValueFormat(OptionFormat.Seconds)
                 .SetColor(new(52, 94, 235, byte.MaxValue));
+
             TimeDecreaseOnCommonTaskComplete = new IntegerOptionItem(69_211_104, "TimeDecreaseOnCommonTaskComplete", new(0, 60, 1), 10, TabGroup.CrewmateRoles)
                 .SetGameMode(CustomGameMode.HideAndSeek)
                 .SetValueFormat(OptionFormat.Seconds)
                 .SetColor(new(52, 94, 235, byte.MaxValue));
+
             TimeDecreaseOnLongTaskComplete = new IntegerOptionItem(69_211_105, "TimeDecreaseOnLongTaskComplete", new(0, 60, 1), 15, TabGroup.CrewmateRoles)
+                .SetGameMode(CustomGameMode.HideAndSeek)
+                .SetValueFormat(OptionFormat.Seconds)
+                .SetColor(new(52, 94, 235, byte.MaxValue));
+
+            TimeDecreaseOnSituationalTaskComplete = new IntegerOptionItem(69_211_106, "TimeDecreaseOnSituationalTaskComplete", new(0, 60, 1), 20, TabGroup.CrewmateRoles)
+                .SetGameMode(CustomGameMode.HideAndSeek)
+                .SetValueFormat(OptionFormat.Seconds)
+                .SetColor(new(52, 94, 235, byte.MaxValue));
+
+            TimeDecreaseOnOtherTaskComplete = new IntegerOptionItem(69_211_107, "TimeDecreaseOnOtherTaskComplete", new(0, 60, 1), 5, TabGroup.CrewmateRoles)
                 .SetGameMode(CustomGameMode.HideAndSeek)
                 .SetValueFormat(OptionFormat.Seconds)
                 .SetColor(new(52, 94, 235, byte.MaxValue));
@@ -60,10 +74,16 @@ namespace EHR.GameMode.HideAndSeekRoles
 
         public static void OnSpecificTaskComplete(PlayerControl pc, PlayerTask task)
         {
-            int time = 0;
-            if (ShipStatus.Instance.ShortTasks.Any(x => x.Id == task.Id)) time = TimeDecreaseOnShortTaskComplete.GetInt();
-            else if (ShipStatus.Instance.CommonTasks.Any(x => x.Id == task.Id)) time = TimeDecreaseOnCommonTaskComplete.GetInt();
-            else if (ShipStatus.Instance.LongTasks.Any(x => x.Id == task.Id)) time = TimeDecreaseOnLongTaskComplete.GetInt();
+            int time = !AddTasksFromListPatch.DisableTasksSettings.TryGetValue(task.TaskType, out OptionItem setting)
+                ? TimeDecreaseOnOtherTaskComplete.GetInt()
+                : setting.Parent.Name switch
+                {
+                    "DisableShortTasks" => TimeDecreaseOnShortTaskComplete.GetInt(),
+                    "DisableCommonTasks" => TimeDecreaseOnCommonTaskComplete.GetInt(),
+                    "DisableLongTasks" => TimeDecreaseOnLongTaskComplete.GetInt(),
+                    "DisableOtherTasks" => TimeDecreaseOnSituationalTaskComplete.GetInt(),
+                    _ => TimeDecreaseOnOtherTaskComplete.GetInt()
+                };
 
             HnSManager.TimeLeft -= time;
             pc.Notify(string.Format(Translator.GetString("TimeDecreased"), time));

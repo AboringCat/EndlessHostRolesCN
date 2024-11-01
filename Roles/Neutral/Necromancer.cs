@@ -30,14 +30,18 @@ namespace EHR.Neutral
         public override void SetupCustomOption()
         {
             SetupSingleRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.Necromancer);
+
             CD = new FloatOptionItem(Id + 2, "NecromancerCD", new(0f, 180f, 0.5f), 30f, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Necromancer])
                 .SetValueFormat(OptionFormat.Seconds);
+
             Dkcd = new FloatOptionItem(Id + 10, "DKCD", new(0f, 180f, 2.5f), 30f, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Necromancer])
                 .SetValueFormat(OptionFormat.Seconds);
+
             KnowTargetRole = new BooleanOptionItem(Id + 13, "NecromancerKnowTargetRole", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Necromancer]);
+
             UndeadCountMode = new StringOptionItem(Id + 15, "UndeadCountMode", UndeadCountModeStrings, 0, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Necromancer]);
         }
@@ -59,11 +63,20 @@ namespace EHR.Neutral
             NecromancerPC = Utils.GetPlayerById(playerId);
         }
 
-        public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = CD.GetFloat();
+        public override void SetKillCooldown(byte id)
+        {
+            Main.AllPlayerKillCooldown[id] = CD.GetFloat();
+        }
 
-        public override bool CanUseKillButton(PlayerControl player) => player.IsAlive();
+        public override bool CanUseKillButton(PlayerControl player)
+        {
+            return player.IsAlive();
+        }
 
-        public override bool CanUseImpostorVentButton(PlayerControl pc) => false;
+        public override bool CanUseImpostorVentButton(PlayerControl pc)
+        {
+            return false;
+        }
 
         public override void ApplyGameOptions(IGameOptions opt, byte playerId)
         {
@@ -130,13 +143,20 @@ namespace EHR.Neutral
         public override bool KnowRole(PlayerControl player, PlayerControl target)
         {
             if (base.KnowRole(player, target)) return true;
+
             if (player.Is(CustomRoles.Undead) && (target.Is(CustomRoles.Necromancer) || target.Is(CustomRoles.Deathknight))) return true;
+
             if (KnowTargetRole.GetBool() && (player.Is(CustomRoles.Necromancer) || player.Is(CustomRoles.Deathknight)) && target.Is(CustomRoles.Undead)) return true;
+
             if (player.Is(CustomRoles.Deathknight) && target.Is(CustomRoles.Necromancer)) return true;
+
             return player.Is(CustomRoles.Necromancer) && target.Is(CustomRoles.Deathknight);
         }
 
-        public static bool CanBeUndead(PlayerControl pc) => pc != null && !pc.Is(CustomRoles.Deathknight) && !pc.Is(CustomRoles.Necromancer) && !pc.Is(CustomRoles.Undead) && !pc.Is(CustomRoles.Loyal) && !pc.IsConverted();
+        public static bool CanBeUndead(PlayerControl pc)
+        {
+            return pc != null && !pc.Is(CustomRoles.Deathknight) && !pc.Is(CustomRoles.Necromancer) && !pc.Is(CustomRoles.Undead) && !pc.Is(CustomRoles.Loyal) && !pc.IsConverted();
+        }
     }
 
     internal class Deathknight : RoleBase
@@ -146,9 +166,7 @@ namespace EHR.Neutral
 
         public override bool IsEnable => DeathknightId != byte.MaxValue;
 
-        public override void SetupCustomOption()
-        {
-        }
+        public override void SetupCustomOption() { }
 
         public override void Init()
         {
@@ -163,11 +181,20 @@ namespace EHR.Neutral
             // if (!UsePets.GetBool()) Deathknight_.ChangeRoleBasis(RoleTypes.Impostor);
         }
 
-        public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = Necromancer.Dkcd.GetFloat();
+        public override void SetKillCooldown(byte id)
+        {
+            Main.AllPlayerKillCooldown[id] = Necromancer.Dkcd.GetFloat();
+        }
 
-        public override bool CanUseKillButton(PlayerControl player) => player.IsAlive();
+        public override bool CanUseKillButton(PlayerControl player)
+        {
+            return player.IsAlive();
+        }
 
-        public override bool CanUseImpostorVentButton(PlayerControl pc) => false;
+        public override bool CanUseImpostorVentButton(PlayerControl pc)
+        {
+            return false;
+        }
 
         public override void ApplyGameOptions(IGameOptions opt, byte playerId)
         {

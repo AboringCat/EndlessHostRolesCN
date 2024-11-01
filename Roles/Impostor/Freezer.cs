@@ -14,9 +14,11 @@ namespace EHR.Impostor
         public override void SetupCustomOption()
         {
             Options.SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.Freezer);
+
             FreezeCooldown = new FloatOptionItem(Id + 2, "FreezeCooldown", new(0f, 180f, 2.5f), 30f, TabGroup.ImpostorRoles)
                 .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Freezer])
                 .SetValueFormat(OptionFormat.Seconds);
+
             FreezeDuration = new FloatOptionItem(Id + 3, "FreezeDuration", new(0f, 180f, 0.5f), 10f, TabGroup.ImpostorRoles)
                 .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Freezer])
                 .SetValueFormat(OptionFormat.Seconds);
@@ -42,9 +44,10 @@ namespace EHR.Impostor
         {
             if (shapeshifting)
             {
-                var beforeSpeed = Main.AllPlayerSpeed[target.PlayerId];
+                float beforeSpeed = Main.AllPlayerSpeed[target.PlayerId];
                 Main.AllPlayerSpeed[target.PlayerId] = Main.MinSpeed;
                 target.MarkDirtySettings();
+
                 LateTask.New(() =>
                 {
                     Main.AllPlayerSpeed[target.PlayerId] = beforeSpeed;

@@ -28,23 +28,29 @@ namespace EHR.Neutral
 
         public override bool IsEnable => SoulHunterId != byte.MaxValue;
 
-        bool IsTargetBlocked => IsEnable && CurrentTarget.ID != byte.MaxValue && CurrentTarget.START_TIMESTAMP != 0;
+        private bool IsTargetBlocked => IsEnable && CurrentTarget.ID != byte.MaxValue && CurrentTarget.START_TIMESTAMP != 0;
 
         public override void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.SoulHunter);
+
             CanVent = new BooleanOptionItem(Id + 3, "CanVent", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter]);
+
             HasImpostorVision = new BooleanOptionItem(Id + 4, "ImpostorVision", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter]);
+
             NumOfSoulsToWin = new IntegerOptionItem(Id + 5, "SoulHunterNumOfSoulsToWin", new(1, 14, 1), 3, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter]);
+
             WaitingTimeAfterMeeting = new IntegerOptionItem(Id + 6, "SoulHunterFreezeTimeAfterMeeting", new(0, 90, 1), 3, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter])
                 .SetValueFormat(OptionFormat.Seconds);
+
             TimeToKillTarget = new IntegerOptionItem(Id + 7, "SoulHunterTimeToKillTarget", new(1, 90, 1), 30, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter])
                 .SetValueFormat(OptionFormat.Seconds);
+
             GetSoulForSuicide = new BooleanOptionItem(Id + 8, "SoulHunterGetSoulForSuicide", true, TabGroup.NeutralRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.SoulHunter]);
         }
@@ -69,16 +75,34 @@ namespace EHR.Neutral
             NormalSpeed = Main.AllPlayerSpeed[playerId];
         }
 
-        public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = WaitingTimeAfterMeeting.GetFloat() + 1.5f;
-        public override void ApplyGameOptions(IGameOptions opt, byte id) => opt.SetVision(HasImpostorVision.GetBool());
-        public override bool CanUseImpostorVentButton(PlayerControl pc) => CanVent.GetBool();
-        public override bool CanUseKillButton(PlayerControl pc) => pc.IsAlive();
-
-        public static bool IsSoulHunterTarget(byte id) => Main.PlayerStates.Any(x => x.Value.Role is SoulHunter { IsEnable: true, IsTargetBlocked: true } sh && sh.CurrentTarget.ID == id);
-
-        void SendRPC()
+        public override void SetKillCooldown(byte id)
         {
-            var writer = CreateRPC(CustomRPC.SyncSoulHunter);
+            Main.AllPlayerKillCooldown[id] = WaitingTimeAfterMeeting.GetFloat() + 1.5f;
+        }
+
+        public override void ApplyGameOptions(IGameOptions opt, byte id)
+        {
+            opt.SetVision(HasImpostorVision.GetBool());
+        }
+
+        public override bool CanUseImpostorVentButton(PlayerControl pc)
+        {
+            return CanVent.GetBool();
+        }
+
+        public override bool CanUseKillButton(PlayerControl pc)
+        {
+            return pc.IsAlive();
+        }
+
+        public static bool IsSoulHunterTarget(byte id)
+        {
+            return Main.PlayerStates.Any(x => x.Value.Role is SoulHunter { IsEnable: true, IsTargetBlocked: true } sh && sh.CurrentTarget.ID == id);
+        }
+
+        private void SendRPC()
+        {
+            MessageWriter writer = CreateRPC(CustomRPC.SyncSoulHunter);
             writer.Write(SoulHunterId);
             writer.Write(Souls);
             writer.Write(CurrentTarget.ID);
@@ -91,6 +115,7 @@ namespace EHR.Neutral
         {
             byte id = reader.ReadByte();
             if (Main.PlayerStates[id].Role is not SoulHunter sh) return;
+
             sh.Souls = reader.ReadInt32();
             sh.CurrentTarget.ID = reader.ReadByte();
             sh.CurrentTarget.START_TIMESTAMP = long.Parse(reader.ReadString());
@@ -151,6 +176,7 @@ namespace EHR.Neutral
             int waitingTime = WaitingTimeAfterMeeting.GetInt();
 
             if (!SoulHunter_.IsModClient()) SoulHunter_.Notify(string.Format(GetString("SoulHunterNotifyFreeze"), target.GetRealName(), waitingTime + 1));
+
             target.Notify(string.Format(GetString("SoulHunterTargetNotify"), SoulHunter_.GetRealName()), 300f);
             LastUpdate = now;
 
@@ -172,6 +198,7 @@ namespace EHR.Neutral
 
             long now = TimeStamp;
             if (LastUpdate >= now) return;
+
             LastUpdate = now;
 
             PlayerControl target = GetPlayerById(CurrentTarget.ID);
@@ -208,10 +235,7 @@ namespace EHR.Neutral
                     CurrentTarget.START_TIMESTAMP = now;
                     SendRPC();
                 }
-                else if (!SoulHunter_.IsModClient())
-                {
-                    SoulHunter_.Notify(string.Format(GetString("SoulHunterNotifyFreeze"), targetName, waitingTime - (now - CurrentTarget.START_TIMESTAMP) + 1));
-                }
+                else if (!SoulHunter_.IsModClient()) SoulHunter_.Notify(string.Format(GetString("SoulHunterNotifyFreeze"), targetName, waitingTime - (now - CurrentTarget.START_TIMESTAMP) + 1));
             }
             else
             {
@@ -223,23 +247,23 @@ namespace EHR.Neutral
                     target.Notify(GetString("SoulHunterTargetNotifySurvived"));
                     SendRPC();
                 }
-                else if (!SoulHunter_.IsModClient())
-                {
-                    SoulHunter_.Notify(string.Format(GetString("SoulHunterNotify"), timeToKill - (now - CurrentTarget.START_TIMESTAMP) + 1, targetName));
-                }
+                else if (!SoulHunter_.IsModClient()) SoulHunter_.Notify(string.Format(GetString("SoulHunterNotify"), timeToKill - (now - CurrentTarget.START_TIMESTAMP) + 1, targetName));
             }
         }
 
         public override string GetSuffix(PlayerControl seer, PlayerControl target, bool hud = false, bool meeting = false)
         {
             if (!hud || Main.PlayerStates[seer.PlayerId].Role is not SoulHunter { IsEnable: true } sh) return string.Empty;
+
             if (!sh.IsTargetBlocked) return string.Empty;
+
             return sh.CurrentTarget.FROZEN ? string.Format(GetString("SoulHunterNotifyFreeze"), GetPlayerById(sh.CurrentTarget.ID).GetRealName(), WaitingTimeAfterMeeting.GetInt() - (TimeStamp - sh.CurrentTarget.START_TIMESTAMP) + 1) : string.Format(GetString("SoulHunterNotify"), TimeToKillTarget.GetInt() - (TimeStamp - sh.CurrentTarget.START_TIMESTAMP) + 1, GetPlayerById(sh.CurrentTarget.ID).GetRealName());
         }
 
         public override string GetProgressText(byte id, bool comms)
         {
             if (Main.PlayerStates[id].Role is not SoulHunter { IsEnable: true } sh) return string.Empty;
+
             int souldsNeeded = NumOfSoulsToWin.GetInt();
             return $"<#777777>-</color> <#{(sh.Souls >= souldsNeeded ? "00ff00" : "ffffff")}>{sh.Souls}/{souldsNeeded}</color>";
         }

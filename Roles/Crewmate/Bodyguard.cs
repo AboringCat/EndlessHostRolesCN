@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using static EHR.Options;
 
 namespace EHR.Crewmate
@@ -27,9 +26,11 @@ namespace EHR.Crewmate
         public override void SetupCustomOption()
         {
             SetupRoleOptions(8400, TabGroup.CrewmateRoles, CustomRoles.Bodyguard);
+
             BodyguardProtectRadius = new FloatOptionItem(8410, "BodyguardProtectRadius", new(0.5f, 5f, 0.5f), 1.5f, TabGroup.CrewmateRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Bodyguard])
                 .SetValueFormat(OptionFormat.Multiplier);
+
             BodyguardKillsKiller = new BooleanOptionItem(8411, "BodyguardKillsKiller", false, TabGroup.CrewmateRoles)
                 .SetParent(CustomRoleSpawnChances[CustomRoles.Bodyguard]);
         }
@@ -40,7 +41,7 @@ namespace EHR.Crewmate
 
             if (killer.PlayerId != target.PlayerId)
             {
-                foreach (var bodyguard in Instances)
+                foreach (Bodyguard bodyguard in Instances)
                 {
                     if (bodyguard.BodyguardPC.PlayerId == target.PlayerId) continue;
 
@@ -53,8 +54,11 @@ namespace EHR.Crewmate
                         continue;
                     }
 
-                    if (BodyguardKillsKiller.GetBool() && bodyguard.BodyguardPC.RpcCheckAndMurder(killer, check: true)) bodyguard.BodyguardPC.Kill(killer);
-                    else killer.SetKillCooldown();
+                    if (BodyguardKillsKiller.GetBool() && bodyguard.BodyguardPC.RpcCheckAndMurder(killer, true))
+                        bodyguard.BodyguardPC.Kill(killer);
+                    else
+                        killer.SetKillCooldown();
+
                     bodyguard.BodyguardPC.Suicide(PlayerState.DeathReason.Sacrifice, killer);
                     Logger.Info($"{bodyguard.BodyguardPC.GetRealName()} stood up and died for {killer.GetRealName()}", "Bodyguard");
                     return false;

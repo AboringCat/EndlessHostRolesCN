@@ -71,6 +71,7 @@ namespace EHR.Impostor
         public override void ApplyGameOptions(IGameOptions opt, byte playerId)
         {
             if (PestControlEnd == 0) return;
+
             opt.SetVision(false);
             opt.SetFloat(FloatOptionNames.ImpostorLightMod, PestControlVision.GetFloat());
             opt.SetFloat(FloatOptionNames.CrewLightMod, PestControlVision.GetFloat());
@@ -80,8 +81,10 @@ namespace EHR.Impostor
         {
             if (DelayedKills.ContainsKey(target.PlayerId)) return false;
 
-            if (target.HasKillButton()) DelayedKills[target.PlayerId] = Utils.TimeStamp + KillDelay.GetInt();
-            else MeetingKills.Add(target.PlayerId);
+            if (target.HasKillButton())
+                DelayedKills[target.PlayerId] = Utils.TimeStamp + KillDelay.GetInt();
+            else
+                MeetingKills.Add(target.PlayerId);
 
             killer.SetKillCooldown(StingCooldown.GetInt());
             return false;
@@ -89,7 +92,8 @@ namespace EHR.Impostor
 
         public override void OnGlobalFixedUpdate(PlayerControl pc, bool lowLoad)
         {
-            if (lowLoad || !GameStates.IsInTask || ExileController.Instance || !DelayedKills.TryGetValue(pc.PlayerId, out var ts) || ts > Utils.TimeStamp) return;
+            if (lowLoad || !GameStates.IsInTask || ExileController.Instance || !DelayedKills.TryGetValue(pc.PlayerId, out long ts) || ts > Utils.TimeStamp) return;
+
             pc.Suicide(PlayerState.DeathReason.Stung, WaspPC);
         }
 
@@ -97,8 +101,9 @@ namespace EHR.Impostor
         {
             if (SwarmModeEnd == 0 && PestControlEnd == 0) return;
 
-            var now = Utils.TimeStamp;
+            long now = Utils.TimeStamp;
             if (LastUpdate == now) return;
+
             LastUpdate = now;
 
             if (SwarmModeEnd != 0)
@@ -109,9 +114,7 @@ namespace EHR.Impostor
                     Utils.SendRPC(CustomRPC.SyncRoleData, WaspPC.PlayerId, SwarmModeEnd);
 
                     if (WaspDiesAfterSwarmEnd.GetBool())
-                    {
                         pc.Suicide();
-                    }
                     else
                     {
                         pc.SyncSettings();
@@ -132,10 +135,11 @@ namespace EHR.Impostor
 
         public override void OnReportDeadBody()
         {
-            foreach (var id in DelayedKills.Keys)
+            foreach (byte id in DelayedKills.Keys)
             {
-                var player = id.GetPlayer();
+                PlayerControl player = id.GetPlayer();
                 if (player == null || !player.IsAlive()) continue;
+
                 player.Suicide(PlayerState.DeathReason.Stung, WaspPC);
             }
 
@@ -164,9 +168,20 @@ namespace EHR.Impostor
             return false;
         }
 
-        public override bool CanUseKillButton(PlayerControl pc) => !EvadedKillThisRound || SwarmModeEnd != 0;
-        public override bool CanUseSabotage(PlayerControl pc) => !EvadedKillThisRound;
-        public override bool CanUseImpostorVentButton(PlayerControl pc) => !EvadedKillThisRound;
+        public override bool CanUseKillButton(PlayerControl pc)
+        {
+            return !EvadedKillThisRound || SwarmModeEnd != 0;
+        }
+
+        public override bool CanUseSabotage(PlayerControl pc)
+        {
+            return !EvadedKillThisRound;
+        }
+
+        public override bool CanUseImpostorVentButton(PlayerControl pc)
+        {
+            return !EvadedKillThisRound;
+        }
 
         public override void AfterMeetingTasks()
         {
@@ -181,13 +196,12 @@ namespace EHR.Impostor
                 foreach (Wasp instance in Instances)
                 {
                     foreach (byte id in exileIds)
-                    {
                         if (id == instance.WaspPC.PlayerId)
                             instance.MeetingKills.Clear();
-                    }
                 }
 
                 List<byte> waspDeathList = [];
+
                 foreach (PlayerControl pc in Main.AllAlivePlayerControls)
                 {
                     foreach (Wasp instance in Instances)
@@ -215,11 +229,15 @@ namespace EHR.Impostor
             return Instances.Any(x => x.MeetingKills.Contains(target)) ? Utils.ColorString(Palette.ImpostorRed, "\u25c0") : string.Empty;
         }
 
-        public void ReceiveRPC(MessageReader reader) => SwarmModeEnd = long.Parse(reader.ReadString());
+        public void ReceiveRPC(MessageReader reader)
+        {
+            SwarmModeEnd = long.Parse(reader.ReadString());
+        }
 
         public override string GetSuffix(PlayerControl seer, PlayerControl target, bool hud = false, bool meeting = false)
         {
             if (seer.PlayerId != WaspPC.PlayerId || seer.PlayerId != target.PlayerId || (seer.IsModClient() && !hud) || meeting || SwarmModeEnd == 0) return string.Empty;
+
             return string.Format(Translator.GetString("Wasp.SwarmModeSuffix"), SwarmModeEnd - Utils.TimeStamp);
         }
     }
